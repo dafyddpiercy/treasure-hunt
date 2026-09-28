@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>X Marks The Spot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B2027; --ink-2:#123138; --panel:#153840; --panel-2:#1b444d;
+    --brass:#C9A227; --brass-light:#E7C766; --brass-dim:#8a7332;
+    --paper:#E8DCB8; --paper-ink:#2b1d0e; --paper-2:#d9c690; --sea:#5f8f88; --sea-2:#4a7a75;
+    --cream:#F1EAD6; --muted:#9fc0bd;
+    --wrong:#b5502f; --wrong-light:#e0a98f;
+    --correct:#4c7a6d; --correct-light:#9fd0bf;
+    --shadow:rgba(0,0,0,.45);
+    --font-display:'IM Fell English', Georgia, 'Times New Roman', serif;
+    --font-body:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  :root:not([data-theme="light"]){ --ink:#0B2027; --panel:#153840; --paper:#E8DCB8; --cream:#F1EAD6; }
+  :root[data-theme="dark"]{ --ink:#0B2027; --panel:#153840; --paper:#E8DCB8; --cream:#F1EAD6; }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; padding:0; height:100%;}
+  body{
+    background:var(--ink);
+    background-image:
+      radial-gradient(circle at 15% 8%, rgba(201,162,39,.10), transparent 40%),
+      radial-gradient(circle at 90% 85%, rgba(201,162,39,.08), transparent 45%);
+    color:var(--cream); font-family:var(--font-body); min-height:100vh; overflow-x:hidden;
+  }
+  #app{max-width:680px; margin:0 auto; min-height:100vh; display:flex; flex-direction:column; padding:0 0 24px;}
+  .screen{display:none; flex-direction:column; flex:1; padding:22px 28px 8px; animation:fadeIn .35s ease;}
+  .screen.active{display:flex;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+  @media (prefers-reduced-motion: reduce){ *{animation-duration:.01ms !important; transition-duration:.01ms !important;} }
+
+  h1,h2{font-family:var(--font-display); font-weight:400; margin:0 0 8px; letter-spacing:.2px;}
+  h1{font-size:2.1rem; line-height:1.08; color:var(--brass-light); text-align:center;}
+  h2{font-size:1.5rem; color:var(--cream);}
+  p{margin:0 0 14px; line-height:1.5; color:var(--muted);}
+  .lede{color:var(--cream); text-align:center;}
+
+  .hero-compass{display:flex; justify-content:center; margin:4px 0 2px;}
+  .hero-compass #needle{transform-origin:30px 30px; animation:needleSettle 1.15s cubic-bezier(.22,.9,.3,1.25) both;}
+  @keyframes needleSettle{0%{transform:rotate(-150deg);} 65%{transform:rotate(18deg);} 100%{transform:rotate(0deg);}}
+
+  .topbar{
+    position:sticky; top:0; z-index:5; background:linear-gradient(var(--ink) 78%, transparent);
+    padding:12px 28px 8px; max-width:680px; margin:0 auto; width:100%; display:none; flex-direction:column; gap:8px;
+  }
+  .topbar-row{display:flex; align-items:center; justify-content:space-between;}
+  .timer{font-family:var(--font-display); font-size:1.4rem; color:var(--brass-light); min-width:60px;}
+  .timer.low{color:var(--wrong-light); animation:pulse 1s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;} 50%{opacity:.5;}}
+  .trail-label{font-size:.8rem; letter-spacing:.2px; color:var(--brass-light); text-align:right; font-weight:600;}
+  .progress-trail{display:flex; gap:7px; justify-content:center; align-items:center;}
+  .pt-dot{width:9px; height:9px; border-radius:50%; border:1.5px solid var(--brass-dim); background:transparent; transition:all .25s ease;}
+  .pt-dot.done{background:var(--brass); border-color:var(--brass);}
+  .pt-dot.flag{border-radius:2px; transform:rotate(45deg);}
+  .pt-dot.flag.done{background:var(--wrong); border-color:var(--wrong-light);}
+
+  .btn{
+    font-family:var(--font-body); font-weight:600; font-size:1rem; background:var(--brass); color:var(--ink);
+    border:none; border-radius:3px; padding:14px 20px; cursor:pointer; width:100%; text-align:center;
+    box-shadow:0 3px 0 var(--brass-dim), 0 6px 14px var(--shadow); transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:active{transform:translateY(3px); box-shadow:0 0 0 var(--brass-dim), 0 3px 8px var(--shadow);}
+  .btn:disabled{opacity:.4; cursor:not-allowed;}
+
+  input[type="text"]{
+    width:100%; font-family:var(--font-body); font-size:1.05rem; padding:14px; border-radius:3px;
+    border:1.5px solid var(--brass-dim); background:var(--panel); color:var(--cream); margin-bottom:14px;
+  }
+  input[type="text"]:focus{outline:2px solid var(--brass); outline-offset:1px;}
+  input[type="text"]::placeholder{color:var(--muted);}
+
+  .stamps{display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 18px; justify-content:center;}
+  .stamp{border:1.5px solid var(--brass-dim); border-radius:999px; padding:6px 12px; font-size:.76rem; color:var(--brass-light); font-weight:500; transform:rotate(var(--r,0deg));}
+  .stamp:nth-child(1){--r:-2deg;} .stamp:nth-child(2){--r:1.5deg;} .stamp:nth-child(3){--r:-1deg;} .stamp:nth-child(4){--r:2deg;}
+
+  .rules{background:var(--panel); border:1px solid var(--brass-dim); border-radius:4px; padding:16px 18px; margin-bottom:18px;}
+  .rules p{margin-bottom:8px; font-size:.9rem;}
+  .rules p:last-child{margin-bottom:0;}
+
+  .clue-label{font-size:.8rem; color:var(--brass-light); letter-spacing:.3px; margin-bottom:6px; font-weight:600;}
+  .question{font-family:var(--font-display); font-size:1.4rem; color:var(--cream); margin-bottom:16px; line-height:1.25;}
+  .options{display:flex; flex-direction:column; gap:10px; margin-bottom:6px;}
+  .opt{text-align:left; background:var(--ink); border:1.5px solid var(--brass-dim); color:var(--cream); border-radius:4px; padding:13px 15px; font-family:var(--font-body); font-size:.94rem; cursor:pointer; line-height:1.4;}
+  .opt:active{transform:scale(.99);}
+  .opt.correct{background:rgba(76,122,109,.35); border-color:var(--correct-light); color:var(--correct-light);}
+  .opt.wrong{background:rgba(181,80,47,.3); border-color:var(--wrong-light); color:var(--wrong-light);}
+  .opt.dim{opacity:.5;}
+  .opt[disabled]{cursor:default;}
+
+  .reveal{margin-top:14px; display:none;}
+  .reveal.show{display:block; animation:fadeIn .3s ease;}
+  .reveal-fact{padding:13px 15px; border-left:3px solid var(--brass); background:rgba(201,162,39,.08); border-radius:0 4px 4px 0; font-size:.88rem; color:var(--cream);}
+  .fragment{margin-top:10px; padding:12px 14px; background:rgba(201,162,39,.14); border:1px dashed var(--brass); border-radius:4px; font-size:.83rem; color:var(--brass-light); display:flex; gap:9px; align-items:flex-start; animation:popIn .4s ease;}
+  @keyframes popIn{from{opacity:0; transform:scale(.88) rotate(-2deg);} to{opacity:1; transform:scale(1) rotate(0);}}
+  .fragment .ico{font-size:1.05rem; line-height:1;}
+
+  .spacer{flex:1;}
+
+  .map-wrap{position:relative; border-radius:6px; overflow:hidden; margin-bottom:10px; box-shadow:0 8px 24px var(--shadow); background:var(--paper);}
+  svg#mapSvg{display:block; width:100%; height:auto; touch-action:none; cursor:crosshair;}
+  .map-hint{font-size:.85rem; text-align:center; color:var(--muted); margin-bottom:12px; min-height:1.3em;}
+
+  .poi{cursor:pointer;}
+  .poi .halo{fill:none; stroke:var(--brass); stroke-width:2;}
+  .poi:not(.found) .halo{animation:poiPulse 1.9s ease-in-out infinite;}
+  @keyframes poiPulse{0%{r:13; opacity:.6;} 75%{r:23; opacity:0;} 100%{r:23; opacity:0;}}
+  .poi .backing{fill:var(--cream); stroke:var(--paper-ink); stroke-width:1; opacity:.96; transition:stroke .15s ease;}
+  .poi .glyph{stroke:var(--paper-ink); stroke-width:1.6; fill:none;}
+  .poi.found .glyph{opacity:.45;}
+  .poi .check{display:none; stroke:var(--correct); stroke-width:2.3; fill:none; stroke-linecap:round; stroke-linejoin:round;}
+  .poi.found .check{display:block;}
+  .poi.found .backing{opacity:.75;}
+  .poi:hover .backing{stroke:var(--brass); stroke-width:2;}
+  .hotspot{cursor:pointer;}
+
+  .toast{position:fixed; left:50%; bottom:26px; transform:translate(-50%,16px); background:var(--panel); color:var(--cream); border:1px solid var(--brass-dim); padding:10px 18px; border-radius:999px; font-size:.83rem; opacity:0; pointer-events:none; transition:all .3s ease; z-index:30; max-width:82%; text-align:center; box-shadow:0 6px 16px var(--shadow);}
+  .toast.show{opacity:1; transform:translate(-50%,0);}
+
+  .sheet-backdrop{position:fixed; inset:0; background:rgba(0,0,0,.55); opacity:0; pointer-events:none; transition:opacity .25s ease; z-index:20;}
+  .sheet-backdrop.show{opacity:1; pointer-events:auto;}
+  .sheet{position:fixed; left:0; right:0; bottom:0; max-width:680px; margin:0 auto; background:var(--ink-2); border-top:2px solid var(--brass); border-radius:16px 16px 0 0; padding:10px 20px 22px; transform:translateY(105%); transition:transform .32s cubic-bezier(.2,.8,.3,1); z-index:21; max-height:82vh; overflow-y:auto; box-shadow:0 -10px 30px var(--shadow);}
+  .sheet.show{transform:translateY(0);}
+  .sheet-handle{width:36px; height:4px; background:var(--brass-dim); border-radius:2px; margin:0 auto 14px;}
+
+  .score-big{font-family:var(--font-display); font-size:3.2rem; color:var(--brass-light); line-height:1; margin:4px 0 2px; text-align:center;}
+  .score-label{color:var(--muted); font-size:.9rem; margin-bottom:20px; text-align:center;}
+  .breakdown{background:var(--panel); border:1px solid var(--brass-dim); border-radius:4px; padding:4px 16px; margin-bottom:18px;}
+  .b-row{display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(201,162,39,.15); font-size:.9rem;}
+  .b-row:last-child{border-bottom:none;}
+  .b-row span:last-child{color:var(--brass-light); font-weight:600; font-family:var(--font-display); font-size:1.05rem;}
+
+  table{width:100%; border-collapse:collapse; margin-bottom:16px;}
+  th{text-align:left; font-size:.74rem; letter-spacing:.3px; color:var(--muted); font-weight:600; padding:0 8px 8px;}
+  th:last-child, td:last-child{text-align:right;}
+  td{padding:12px 8px; border-top:1px solid rgba(201,162,39,.15); font-size:.94rem;}
+  .rank{font-family:var(--font-display); font-size:1.2rem; color:var(--brass-light); width:28px;}
+  .rank.gold{color:#E7C766;} .rank.silver{color:#cfd6d4;} .rank.bronze{color:#c98a4f;}
+  .me-row td{background:rgba(201,162,39,.1);}
+  .lb-empty{text-align:center; color:var(--muted); padding:30px 0; font-size:.9rem;}
+  .lb-note{font-size:.78rem; color:var(--muted); text-align:center; margin-top:4px;}
+  .footer-note{font-size:.75rem; color:var(--muted); text-align:center; margin-top:auto; padding-top:16px;}
+
+  .code-box{width:100%; font-family:'Courier New', monospace; font-size:.82rem; padding:14px; border-radius:4px; border:1.5px dashed var(--brass-dim); background:var(--panel); color:var(--brass-light); resize:none; margin-bottom:10px; word-break:break-all;}
+  .code-box:focus{outline:2px solid var(--brass); outline-offset:1px;}
+  .code-label{font-size:.8rem; color:var(--muted); text-align:center; margin-bottom:8px;}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div class="topbar" id="topbar">
+    <div class="topbar-row">
+      <div class="timer" id="timerEl">5:00</div>
+      <div class="trail-label" id="trailLabel"></div>
+    </div>
+    <div class="progress-trail" id="progressTrail">
+      <span class="pt-dot" data-i="0"></span>
+      <span class="pt-dot" data-i="1"></span>
+      <span class="pt-dot" data-i="2"></span>
+      <span class="pt-dot" data-i="3"></span>
+      <span class="pt-dot flag" data-i="4"></span>
+    </div>
+  </div>
+
+  <section class="screen active" data-screen="welcome">
+    <div class="hero-compass">
+      <svg viewBox="0 0 60 60" width="52" height="52">
+        <circle cx="30" cy="30" r="26" fill="none" stroke="#8a7332" stroke-width="1.5"/>
+        <circle cx="30" cy="30" r="19" fill="none" stroke="#8a7332" stroke-width="1"/>
+        <g id="needle">
+          <path d="M30,9 L34.5,30 L30,51 L25.5,30 Z" fill="#C9A227"/>
+          <path d="M30,9 L34.5,30 L30,30 Z" fill="#E7C766"/>
+        </g>
+        <circle cx="30" cy="30" r="3" fill="#0B2027" stroke="#C9A227" stroke-width="1"/>
+      </svg>
+    </div>
+    <h1>X Marks The Spot</h1>
+    <p class="lede">An explorable map. One house. Five minutes on the clock.</p>
+
+    <div class="stamps">
+      <span class="stamp">Born: Bangor</span>
+      <span class="stamp">Raised: Porthmadog</span>
+      <span class="stamp">Ysgol Eifionydd</span>
+      <span class="stamp">Bristol &middot; Physics &amp; French</span>
+    </div>
+
+    <div class="rules">
+      <p><strong style="color:var(--cream)">How it works:</strong> Click around the map. Four markers hide real facts about me &mdash; planted among some very fake options.</p>
+      <p>Explore in any order. Answering &mdash; right or wrong &mdash; hands you a fragment of where to look. Some other things on the map do something too, if you're curious.</p>
+      <p>When you're ready: drop one pin for the house I grew up in. Closest pin wins.</p>
+      <p>5 minutes total. The clock starts the second you hit go.</p>
+    </div>
+
+    <input type="text" id="nameInput" placeholder="Your name (goes on your result)" maxlength="24">
+    <button class="btn" id="startBtn">Start the clock</button>
+    <p class="footer-note" id="nameWarning" style="color:var(--wrong-light); display:none;">Pop your name in first &mdash; it goes on your result.</p>
+  </section>
+
+  <section class="screen" data-screen="hunt">
+    <div class="map-wrap">
+      <svg id="mapSvg" viewBox="0 0 400 580" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <div class="map-hint" id="mapHint">Click the map to explore. Click open ground to drop your pin whenever you're ready.</div>
+    <div class="spacer"></div>
+    <button class="btn" id="mapConfirmBtn" style="display:none;">Lock in my guess</button>
+    <button class="btn" id="mapResultsBtn" style="display:none;">See how I did</button>
+  </section>
+
+  <section class="screen" data-screen="results">
+    <h2 style="text-align:center;">Trail complete.</h2>
+    <div class="score-big" id="totalScore">0</div>
+    <div class="score-label">total points</div>
+    <div class="breakdown" id="breakdown"></div>
+    <p class="code-label">Your code &mdash; hand it to your host to drop your pin on the big screen, or paste it in the team chat</p>
+    <textarea class="code-box" id="codeBox" rows="3" readonly></textarea>
+    <button class="btn" id="copyCodeBtn">Copy my code</button>
+  </section>
+
+</div>
+
+<div class="sheet-backdrop" id="sheetBackdrop"></div>
+<div class="sheet" id="clueSheet">
+  <div class="sheet-handle"></div>
+  <div class="clue-label" id="clueLabel"></div>
+  <div class="question" id="clueQuestion"></div>
+  <div class="options" id="clueOptions"></div>
+  <div class="reveal" id="clueReveal"></div>
+  <button class="btn" id="sheetCloseBtn" style="display:none; margin-top:14px;">Back to the map</button>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  var MAP_W = 1158, MAP_H = 833;
+  var GRID_COLS = ['A','B','C','D'];
+  var GRID_X = [0, MAP_W*0.25, MAP_W*0.5, MAP_W*0.75, MAP_W];
+  var GRID_Y = [0, MAP_H*0.25, MAP_H*0.5, MAP_H*0.75, MAP_H];
+  function cellOf(x,y){
+    var ci=0, ri=0, i;
+    for(i=0;i<4;i++){ if(x>=GRID_X[i]) ci=i; }
+    for(i=0;i<4;i++){ if(y>=GRID_Y[i]) ri=i; }
+    return GRID_COLS[ci] + (ri+1);
+  }
+  // MOCKUP ONLY — placeholder until real pin locations are given
+  var TRUE_SPOT = {x:470, y:335};
+  var TRUE_CELL = cellOf(TRUE_SPOT.x, TRUE_SPOT.y);
+  var MAP_MAX_DIST = 450;
+  var MAP_MAX_POINTS = 250;
+  var GAME_SECONDS = 300;
+
+  var CLUES = [
+    {
+      id:'orienteering', shortName:'The sport', poi:{x:200,y:520,icon:'compass'},
+      question:"Growing up, the sport I actually competed in was\u2026",
+      options:["Orienteering \u2014 racing through forest with a map and compass","Competitive sheepdog trials","Extreme ironing","Synchronised swimming"],
+      correct:0,
+      reveal:"Orienteering. Running flat out through a forest, alone, trying to read a map faster than you can think.",
+      mapHint:"Rule out the far edges \u2014 it isn't in row 1 or row 4."
+    },
+    {
+      id:'peaks', shortName:'The challenge', poi:{x:950,y:120,icon:'flag'},
+      question:"In 2009 I did the Welsh 15 Peaks. How long did it take me?",
+      options:["16 hours","3 days, with pub stops","6 hours flat","30 hours, mostly spent lost"],
+      correct:0,
+      reveal:"16 hours. Fifteen summits, one very long day, and a strong argument for never doing it again.",
+      mapHint:"Close enough to hear the tide \u2014 it's in column A or column B."
+    },
+    {
+      id:'border', shortName:'The near miss', poi:{x:170,y:710,icon:'boat'},
+      question:"In 1997, visiting a friend's family in Hong Kong, I nearly got arrested at the China border. What actually happened?",
+      options:["Got on the wrong bus \u2014 its last stop was the last stop before the mainland border","Tried to sneak a Welsh flag across as a prank","Got caught photographing a checkpoint","Argued with a guard about a visa stamp"],
+      correct:0,
+      reveal:"Just the bus. Wrong stop, right year \u2014 1997, the handover \u2014 an extremely wrong place to look lost.",
+      mapHint:"On the Porthmadog side of the Cob \u2014 that narrows it to row 2 or row 3."
+    },
+    {
+      id:'welsh', shortName:'The language', poi:{x:530,y:180,icon:'quill'},
+      question:"Translate: \u201cDw i wrth fy modd yn crwydro.\u201d",
+      options:["I love wandering / I'm in my element roaming","I am extremely lost right now","This sheep is not mine","I'd like a second breakfast"],
+      correct:0,
+      reveal:"\u201cI love wandering.\u201d Fairly on the nose, given what happens next.",
+      mapHint:"Stop wandering \u2014 it's square " + TRUE_CELL + "."
+    }
+  ];
+
+  var HOTSPOTS = [
+    {key:'compass', x:1090, y:70, r:30, msg:"Still points north. Mostly out of habit."}
+  ];
+
+  var state = {
+    name:'', answersById:{}, mapScore:0, mapDist:null, total:0,
+    timeLeft:GAME_SECONDS, timerHandle:null, qStartTs:0, ended:false, submitted:false
+  };
+  var mapState = {guess:null, locked:false};
+  var toastTimer = null;
+
+  function $(sel){ return document.querySelector(sel); }
+  function show(name){
+    document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+    var el = document.querySelector('.screen[data-screen="'+name+'"]');
+    if(el) el.classList.add('active');
+    window.scrollTo(0,0);
+  }
+  function fmtTime(sec){ sec=Math.max(0,sec); var m=Math.floor(sec/60), s=sec%60; return m+':'+(s<10?'0':'')+s; }
+  function ptsOf(id){ return (state.answersById[id] && state.answersById[id].points) || 0; }
+
+  function startTimer(){
+    $('#topbar').style.display = 'flex';
+    state.timerHandle = setInterval(function(){
+      state.timeLeft--;
+      renderTimer();
+      if(state.timeLeft<=0){ clearInterval(state.timerHandle); forceEnd(); }
+    },1000);
+    renderTimer();
+  }
+  function renderTimer(){
+    var el=$('#timerEl'); el.textContent=fmtTime(state.timeLeft); el.classList.toggle('low', state.timeLeft<=60);
+  }
+  function forceEnd(){
+    if(state.ended) return;
+    closeSheet();
+    mapState.locked = true;
+    finishGame();
+  }
+  function updateProgress(){
+    CLUES.forEach(function(c,i){
+      var dot = document.querySelector('.pt-dot[data-i="'+i+'"]');
+      if(dot) dot.classList.toggle('done', !!state.answersById[c.id]);
+    });
+    var flagDot = document.querySelector('.pt-dot[data-i="4"]');
+    if(flagDot) flagDot.classList.toggle('done', mapState.locked);
+  }
+  function updateHuntStatus(){
+    var count = Object.keys(state.answersById).length;
+    $('#trailLabel').textContent = count + '/4 found';
+  }
+  function showToast(msg){
+    var t=$('#toast'); t.textContent=msg; t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer=setTimeout(function(){ t.classList.remove('show'); }, 2600);
+  }
+
+  $('#startBtn').addEventListener('click', function(){
+    var name = $('#nameInput').value.trim();
+    if(!name){ $('#nameWarning').style.display='block'; return; }
+    state.name = name;
+    startTimer();
+    renderHunt();
+  });
+
+  function renderHunt(){
+    updateProgress();
+    updateHuntStatus();
+    buildMapSvg();
+    show('hunt');
+  }
+
+  // ---------- sheet ----------
+  function openSheet(){ $('#sheetBackdrop').classList.add('show'); $('#clueSheet').classList.add('show'); }
+  function closeSheet(){ $('#sheetBackdrop').classList.remove('show'); $('#clueSheet').classList.remove('show'); }
+  $('#sheetBackdrop').addEventListener('click', closeSheet);
+  $('#sheetCloseBtn').addEventListener('click', closeSheet);
+
+  function buildRevealHtml(clue, correct, points){
+    return '<div class="reveal-fact">'+clue.reveal+(correct?'  (+'+points+' pts)':'  (+0 pts)')+'</div>'+
+      '<div class="fragment"><span class="ico">&#128220;</span><span><strong>Map fragment: </strong>'+clue.mapHint+'</span></div>';
+  }
+
+  function openClueSheet(id){
+    var clue = CLUES.filter(function(c){ return c.id===id; })[0];
+    if(!clue) return;
+    $('#clueLabel').textContent = clue.shortName;
+    $('#clueQuestion').textContent = clue.question;
+    var wrap = $('#clueOptions'); wrap.innerHTML='';
+    var revealEl = $('#clueReveal'); revealEl.classList.remove('show'); revealEl.innerHTML='';
+    $('#sheetCloseBtn').style.display='none';
+
+    var already = state.answersById[id];
+    if(already){
+      clue.options.forEach(function(optText,i){
+        var b=document.createElement('button');
+        b.className='opt'; b.textContent=optText; b.disabled=true;
+        if(i===clue.correct) b.classList.add('correct');
+        else if(i===already.chosenIdx) b.classList.add('wrong');
+        else b.classList.add('dim');
+        wrap.appendChild(b);
+      });
+      revealEl.innerHTML = buildRevealHtml(clue, already.correct, already.points);
+      revealEl.classList.add('show');
+      $('#sheetCloseBtn').style.display='block';
+    } else {
+      state.qStartTs = Date.now();
+      clue.options.forEach(function(optText,i){
+        var b=document.createElement('button');
+        b.className='opt'; b.textContent=optText;
+        b.addEventListener('click', function(){ answerClue(clue,i,wrap); });
+        wrap.appendChild(b);
+      });
+    }
+    openSheet();
+  }
+
+  function answerClue(clue, chosenIdx, wrap){
+    var buttons = wrap.querySelectorAll('.opt');
+    buttons.forEach(function(btn,i){
+      btn.disabled=true;
+      if(i===clue.correct) btn.classList.add('correct');
+      else if(i===chosenIdx) btn.classList.add('wrong');
+      else btn.classList.add('dim');
+    });
+    var elapsed=(Date.now()-state.qStartTs)/1000;
+    var correct = chosenIdx===clue.correct;
+    var points=0;
+    if(correct){ var bonus=Math.max(0,Math.round(20-Math.min(elapsed,20))); points=100+bonus; }
+    state.answersById[clue.id] = {correct:correct, points:points, chosenIdx:chosenIdx};
+
+    var revealEl=$('#clueReveal');
+    revealEl.innerHTML = buildRevealHtml(clue, correct, points);
+    revealEl.classList.add('show');
+    $('#sheetCloseBtn').style.display='block';
+
+    var poiEl = document.querySelector('.poi[data-id="'+clue.id+'"]');
+    if(poiEl) poiEl.classList.add('found');
+    updateProgress();
+    updateHuntStatus();
+  }
+
+  // ---------- map ----------
+  function svgAttrs(attrs){ var s=''; for(var k in attrs){ s+=' '+k+'="'+attrs[k]+'"'; } return s; }
+  function textLbl(x,y,txt,size,opacity,bold,anchor){
+    return '<text x="'+x+'" y="'+y+'" font-family="Inter, sans-serif" font-size="'+size+'" fill="var(--paper-ink)" opacity="'+opacity+'" font-weight="'+(bold?'700':'500')+'" text-anchor="'+(anchor||'middle')+'" letter-spacing="0.4">'+txt+'</text>';
+  }
+  function hachures(cx,cy,rows,cols,spacing,len,angle){
+    var out=''; var rad=angle*Math.PI/180;
+    for(var r=0;r<rows;r++){
+      for(var c=0;c<cols;c++){
+        var x=cx + c*spacing + (r%2? spacing/2:0);
+        var y=cy + r*spacing*0.6;
+        var dx=Math.cos(rad)*len/2, dy=Math.sin(rad)*len/2;
+        out += '<line x1="'+(x-dx)+'" y1="'+(y-dy)+'" x2="'+(x+dx)+'" y2="'+(y+dy)+'" stroke="var(--paper-ink)" stroke-width="1" opacity="0.35" stroke-linecap="round"/>';
+      }
+    }
+    return out;
+  }
+  function treeCluster(cx,cy,n){
+    var out=''; var seedX=[0,9,-8,4,-13,14,-3,18,-18,7];
+    var seedY=[0,-6,5,-11,-2,3,10,-4,-9,8];
+    for(var i=0;i<n;i++){
+      var x=cx+seedX[i%seedX.length], y=cy+seedY[i%seedY.length];
+      out += '<circle cx="'+x+'" cy="'+y+'" r="4.5" fill="var(--sea-2)" opacity="0.28"/>';
+      out += '<circle cx="'+x+'" cy="'+(y-1)+'" r="2.6" fill="var(--paper-ink)" opacity="0.3"/>';
+    }
+    return out;
+  }
+  function gridLabel(x,y,txt){
+    return '<circle cx="'+x+'" cy="'+y+'" r="12" fill="var(--paper)" stroke="var(--brass-dim)" stroke-width="1" opacity="0.92"/>'+
+      '<text x="'+x+'" y="'+(y+4)+'" font-family="Inter, sans-serif" font-size="12" font-weight="700" fill="var(--paper-ink)" text-anchor="middle">'+txt+'</text>';
+  }
+  function gridOverlay(){
+    var out='<g opacity="0.6">'; var i;
+    for(i=1;i<4;i++){ out += '<line x1="'+GRID_X[i]+'" y1="'+GRID_Y[0]+'" x2="'+GRID_X[i]+'" y2="'+GRID_Y[4]+'" stroke="var(--brass-light)" stroke-width="1.5" stroke-dasharray="1,5"/>'; }
+    for(i=1;i<4;i++){ out += '<line x1="'+GRID_X[0]+'" y1="'+GRID_Y[i]+'" x2="'+GRID_X[4]+'" y2="'+GRID_Y[i]+'" stroke="var(--brass-light)" stroke-width="1.5" stroke-dasharray="1,5"/>'; }
+    out += '</g>';
+    for(i=0;i<4;i++){ var cx=(GRID_X[i]+GRID_X[i+1])/2; out += gridLabel(cx, 32, GRID_COLS[i]); }
+    for(i=0;i<4;i++){ var cy=(GRID_Y[i]+GRID_Y[i+1])/2; out += gridLabel(32, cy, String(i+1)); }
+    return out;
+  }
+  function frameBorder(){
+    var m1=10, m2=17;
+    return '<rect x="'+m1+'" y="'+m1+'" width="'+(MAP_W-2*m1)+'" height="'+(MAP_H-2*m1)+'" fill="none" stroke="var(--brass)" stroke-width="3"/>'+
+           '<rect x="'+m2+'" y="'+m2+'" width="'+(MAP_W-2*m2)+'" height="'+(MAP_H-2*m2)+'" fill="none" stroke="var(--brass-dim)" stroke-width="1.2"/>'+
+           cornerMark(m1,m1,1,1)+cornerMark(MAP_W-m1,m1,-1,1)+cornerMark(m1,MAP_H-m1,1,-1)+cornerMark(MAP_W-m1,MAP_H-m1,-1,-1);
+  }
+  function cornerMark(x,y,dx,dy){
+    return '<path d="M'+x+','+(y+16*dy)+' L'+x+','+y+' L'+(x+16*dx)+','+y+'" fill="none" stroke="var(--brass)" stroke-width="2"/>';
+  }
+  function compassRose(cx,cy){
+    return '<g id="compassGroup" opacity="0.75" stroke="var(--paper-ink)" style="transform-origin:'+cx+'px '+cy+'px;">'+
+      '<circle cx="'+cx+'" cy="'+cy+'" r="22" fill="none" stroke-width="1"/>'+
+      '<line x1="'+cx+'" y1="'+(cy-22)+'" x2="'+cx+'" y2="'+(cy+22)+'" stroke-width="1"/>'+
+      '<line x1="'+(cx-22)+'" y1="'+cy+'" x2="'+(cx+22)+'" y2="'+cy+'" stroke-width="1"/>'+
+      '<path d="M'+cx+','+(cy-22)+' L'+(cx+5)+','+cy+' L'+cx+','+(cy+22)+' L'+(cx-5)+','+cy+' Z" fill="var(--paper-ink)" opacity="0.5" stroke="none"/>'+
+      textLbl(cx,cy-28,'N',9,0.8,true)+
+      '</g>';
+  }
+  function grain(){
+    return '<defs><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.06 0"/></filter></defs>'+
+           '<rect x="0" y="0" width="400" height="580" filter="url(#grain)" pointer-events="none"/>';
+  }
+  function poiIconPath(type){
+    switch(type){
+      case 'compass': return '<circle class="glyph" cx="0" cy="0" r="7"/><path d="M0,-5 L2,0 L0,5 L-2,0 Z" fill="var(--paper-ink)" stroke="none"/>';
+      case 'flag': return '<line class="glyph" x1="0" y1="7" x2="0" y2="-7"/><path d="M0,-7 L8,-4 L0,-1 Z" fill="var(--paper-ink)" stroke="none"/>';
+      case 'boat': return '<path d="M-8,2 C-8,7 8,7 8,2 Z" fill="var(--paper-ink)" stroke="none"/><line class="glyph" x1="0" y1="2" x2="0" y2="-7"/><path d="M0,-7 L6,-3 L0,-1 Z" fill="var(--paper-ink)" stroke="none"/>';
+      case 'quill': return '<circle cx="-6" cy="0" r="3" fill="var(--paper-ink)" stroke="none"/><circle cx="6" cy="0" r="3" fill="var(--paper-ink)" stroke="none"/><line class="glyph" x1="-4" y1="0" x2="4" y2="0" stroke-width="4"/>';
+      default: return '';
+    }
+  }
+  function poiMarkup(clue){
+    var p = clue.poi;
+    return '<g class="poi" data-id="'+clue.id+'" transform="translate('+p.x+','+p.y+')">'+
+      '<circle class="halo" cx="0" cy="0" r="13"/>'+
+      '<circle class="backing" cx="0" cy="0" r="13"/>'+
+      poiIconPath(p.icon)+
+      '<path class="check" d="M-4,0 L-1,3 L5,-4"/>'+
+      '</g>';
+  }
+  function hotspotMarkup(h){
+    return '<circle class="hotspot" data-key="'+h.key+'" cx="'+h.x+'" cy="'+h.y+'" r="'+h.r+'" fill="transparent"/>';
+  }
+
+  function buildMapSvg(){
+    var svg=$('#mapSvg');
+    svg.setAttribute('viewBox', '0 0 ' + MAP_W + ' ' + MAP_H);
+    var html = '';
+    html += '<image href="porthmadog-map.png" x="0" y="0" width="'+MAP_W+'" height="'+MAP_H+'" preserveAspectRatio="xMidYMid slice"/>';
+    html += '<rect x="0" y="0" width="'+MAP_W+'" height="'+MAP_H+'" fill="rgba(20,45,40,0.12)"/>';
+    html += gridOverlay();
+    html += compassRose(1090,70);
+    html += frameBorder();
+    HOTSPOTS.forEach(function(h){ html += hotspotMarkup(h); });
+    CLUES.forEach(function(c){ html += poiMarkup(c); });
+    svg.innerHTML = html;
+    svg.addEventListener('pointerdown', onSvgTap);
+  }
+
+  function svgPoint(evt){
+    var svg=$('#mapSvg'); var pt=svg.createSVGPoint();
+    pt.x=evt.clientX; pt.y=evt.clientY;
+    var ctm=svg.getScreenCTM().inverse();
+    return pt.matrixTransform(ctm);
+  }
+
+  function onSvgTap(evt){
+    var p = svgPoint(evt);
+    var t = evt.target;
+    var poiEl = t.closest ? t.closest('.poi') : null;
+    if(poiEl){ openClueSheet(poiEl.getAttribute('data-id')); return; }
+    var hsEl = t.closest ? t.closest('.hotspot') : null;
+    if(hsEl){
+      var key = hsEl.getAttribute('data-key');
+      var hs = HOTSPOTS.filter(function(h){ return h.key===key; })[0];
+      if(hs) showToast(hs.msg);
+      if(key==='compass'){
+        var cg = document.getElementById('compassGroup');
+        if(cg){ cg.style.transition='transform .8s ease'; cg.style.transform='rotate(360deg)';
+          setTimeout(function(){ cg.style.transition='none'; cg.style.transform='rotate(0deg)'; },850);
+        }
+      }
+      return;
+    }
+    if(mapState.locked) return;
+    mapState.guess={x:p.x,y:p.y};
+    drawGuessPin(p.x,p.y);
+    $('#mapHint').textContent='Pin placed at square '+cellOf(p.x,p.y)+'. Click again to move it, or lock it in.';
+    $('#mapConfirmBtn').style.display='block';
+  }
+
+  function drawGuessPin(x,y){
+    var old=document.getElementById('guessPin'); if(old) old.remove();
+    var svg=$('#mapSvg');
+    var g=document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.setAttribute('id','guessPin');
+    g.innerHTML='<circle cx="'+x+'" cy="'+y+'" r="7" fill="var(--wrong)" stroke="var(--cream)" stroke-width="2"/><circle cx="'+x+'" cy="'+y+'" r="2" fill="var(--cream)"/>';
+    svg.appendChild(g);
+  }
+  $('#mapConfirmBtn').addEventListener('click', function(){
+    if(!mapState.guess) return;
+    mapState.locked=true;
+    $('#mapConfirmBtn').style.display='none';
+    var dx=mapState.guess.x-TRUE_SPOT.x, dy=mapState.guess.y-TRUE_SPOT.y;
+    var dist=Math.sqrt(dx*dx+dy*dy);
+    var pts=Math.round(Math.max(0, MAP_MAX_POINTS*(1-dist/MAP_MAX_DIST)));
+    state.mapDist=dist; state.mapScore=pts;
+    var svg=$('#mapSvg');
+    var g=document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.innerHTML =
+      '<line x1="'+mapState.guess.x+'" y1="'+mapState.guess.y+'" x2="'+TRUE_SPOT.x+'" y2="'+TRUE_SPOT.y+'" stroke="var(--brass)" stroke-width="1.5" stroke-dasharray="3,4" opacity="0.85"/>'+
+      '<g transform="translate('+TRUE_SPOT.x+','+TRUE_SPOT.y+')">'+
+        '<path d="M0,-16 L5,-2 L0,2 L-5,-2 Z" fill="var(--brass)" stroke="var(--paper-ink)" stroke-width="1"/>'+
+        '<text x="0" y="18" font-family=\'IM Fell English, serif\' font-size="12" fill="var(--paper-ink)" text-anchor="middle">Rockcliffe</text>'+
+      '</g>';
+    svg.appendChild(g);
+    var flavor = dist<15 ? "Almost exactly on it. Unsettling." :
+                 dist<50 ? "Close \u2014 you'd have found it eventually." :
+                 dist<120 ? "Right square, wrong end of it." :
+                 "A bold guess, geographically speaking.";
+    $('#mapHint').textContent = flavor+' It was square '+TRUE_CELL+'. (+'+pts+' pts)';
+    updateProgress();
+    $('#mapResultsBtn').style.display='block';
+  });
+  $('#mapResultsBtn').addEventListener('click', function(){ finishGame(); });
+
+  function finishGame(){
+    if(state.ended) return;
+    state.ended=true;
+    if(state.timerHandle) clearInterval(state.timerHandle);
+    var cluePts = CLUES.reduce(function(s,c){ return s+ptsOf(c.id); },0);
+    var total = cluePts + state.mapScore;
+    state.total=total;
+    $('#totalScore').textContent=total;
+    var bd=$('#breakdown'); bd.innerHTML='';
+    CLUES.forEach(function(c){
+      bd.innerHTML += '<div class="b-row"><span>'+c.shortName+'</span><span>'+ptsOf(c.id)+'</span></div>';
+    });
+    bd.innerHTML += '<div class="b-row"><span>Pin drop</span><span>'+state.mapScore+'</span></div>';
+    show('results');
+    $('#codeBox').value = generateCode();
+  }
+
+  // ---------- score code (no backend needed) ----------
+  function b64urlEncode(str){
+    var b64 = btoa(unescape(encodeURIComponent(str)));
+    return b64.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  }
+  function generateCode(){
+    var payload = {
+      n: state.name,
+      s: state.total,
+      x: mapState.guess ? Math.round(mapState.guess.x) : null,
+      y: mapState.guess ? Math.round(mapState.guess.y) : null,
+      t: GAME_SECONDS - Math.max(0, state.timeLeft)
+    };
+    return 'XMTS1-' + b64urlEncode(JSON.stringify(payload));
+  }
+
+  $('#copyCodeBtn').addEventListener('click', function(){
+    var box = $('#codeBox');
+    box.select();
+    box.setSelectionRange(0, 99999);
+    var done = function(){ showToast('Copied \u2014 hand it to your host or paste it in the chat.'); };
+    var fail = function(){ showToast('Selected \u2014 press Ctrl/Cmd+C to copy.'); };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(box.value).then(done, fail);
+    } else { fail(); }
+  });
+
+})();
+</script>
+</body>
+</html>
