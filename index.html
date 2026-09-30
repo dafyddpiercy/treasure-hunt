@@ -4,30 +4,30 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>X Marks The Spot</title>
+<title>Welcome to Porthmadog</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#0B2027; --ink-2:#123138; --panel:#153840; --panel-2:#1b444d;
-    --brass:#C9A227; --brass-light:#E7C766; --brass-dim:#8a7332;
-    --paper:#E8DCB8; --paper-ink:#2b1d0e; --paper-2:#d9c690; --sea:#5f8f88; --sea-2:#4a7a75;
-    --cream:#F1EAD6; --muted:#9fc0bd;
-    --wrong:#b5502f; --wrong-light:#e0a98f;
-    --correct:#4c7a6d; --correct-light:#9fd0bf;
+    --ink:#2c293d; --ink-2:#232032; --panel:#46425e; --panel-2:#15788c;
+    --brass:#00b9be; --brass-light:#ffeecc; --brass-dim:#15788c;
+    --paper:#ffeecc; --paper-ink:#2c293d; --paper-2:#ffdca6; --sea:#15788c; --sea-2:#0e5e6d;
+    --cream:#ece9f2; --muted:#b3aec9;
+    --wrong:#ff6973; --wrong-light:#ffb0a3;
+    --correct:#00b9be; --correct-light:#7fe2e2;
     --shadow:rgba(0,0,0,.45);
     --font-display:'IM Fell English', Georgia, 'Times New Roman', serif;
-    --font-body:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-body:'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
-  :root:not([data-theme="light"]){ --ink:#0B2027; --panel:#153840; --paper:#E8DCB8; --cream:#F1EAD6; }
-  :root[data-theme="dark"]{ --ink:#0B2027; --panel:#153840; --paper:#E8DCB8; --cream:#F1EAD6; }
+  :root:not([data-theme="light"]){ --ink:#2c293d; --panel:#46425e; --paper:#ffeecc; --cream:#ece9f2; }
+  :root[data-theme="dark"]{ --ink:#2c293d; --panel:#46425e; --paper:#ffeecc; --cream:#ece9f2; }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
   html,body{margin:0; padding:0; height:100%;}
   body{
-    background:var(--ink);
+    background:var(--panel);
     background-image:
-      radial-gradient(circle at 15% 8%, rgba(201,162,39,.10), transparent 40%),
-      radial-gradient(circle at 90% 85%, rgba(201,162,39,.08), transparent 45%);
+      radial-gradient(circle at 15% 8%, rgba(0,185,190,.12), transparent 40%),
+      radial-gradient(circle at 90% 85%, rgba(255,105,115,.08), transparent 45%);
     color:var(--cream); font-family:var(--font-body); min-height:100vh; overflow-x:hidden;
   }
   #app{max-width:680px; margin:0 auto; min-height:100vh; display:flex; flex-direction:column; padding:0 0 24px;}
@@ -37,7 +37,8 @@
   @media (prefers-reduced-motion: reduce){ *{animation-duration:.01ms !important; transition-duration:.01ms !important;} }
 
   h1,h2{font-family:var(--font-display); font-weight:400; margin:0 0 8px; letter-spacing:.2px;}
-  h1{font-size:2.1rem; line-height:1.08; color:var(--brass-light); text-align:center;}
+  h1{font-size:2.1rem; line-height:1.15; color:var(--brass-light); text-align:center;}
+  h1 .h1-sub{display:block; margin-top:6px;}
   h2{font-size:1.5rem; color:var(--cream);}
   p{margin:0 0 14px; line-height:1.5; color:var(--muted);}
   .lede{color:var(--cream); text-align:center;}
@@ -47,10 +48,14 @@
   @keyframes needleSettle{0%{transform:rotate(-150deg);} 65%{transform:rotate(18deg);} 100%{transform:rotate(0deg);}}
 
   .topbar{
-    position:sticky; top:0; z-index:5; background:linear-gradient(var(--ink) 78%, transparent);
+    position:sticky; top:0; z-index:5; background:linear-gradient(var(--panel) 78%, transparent);
     padding:12px 28px 8px; max-width:680px; margin:0 auto; width:100%; display:none; flex-direction:column; gap:8px;
   }
   .topbar-row{display:flex; align-items:center; justify-content:space-between;}
+  .topbar-left{display:flex; align-items:center; gap:10px;}
+  .menu-btn{background:none; border:1.5px solid var(--brass-dim); color:var(--brass-light); border-radius:6px; width:34px; height:34px; font-size:1.15rem; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; line-height:1; font-family:var(--font-body); flex-shrink:0;}
+  .menu-btn:hover{border-color:var(--brass); color:var(--cream);}
+  .menu-btn:active{transform:translateY(1px);}
   .timer{font-family:var(--font-display); font-size:1.4rem; color:var(--brass-light); min-width:60px;}
   .timer.low{color:var(--wrong-light); animation:pulse 1s infinite;}
   @keyframes pulse{0%,100%{opacity:1;} 50%{opacity:.5;}}
@@ -85,10 +90,21 @@
   .rules p:last-child{margin-bottom:0;}
 
   .clue-label{font-size:.8rem; color:var(--brass-light); letter-spacing:.3px; margin-bottom:6px; font-weight:600;}
+  .clue-photo{width:100%; max-height:320px; object-fit:contain; background:var(--ink-2); border-radius:8px; margin-bottom:14px; display:block; box-shadow:0 6px 18px var(--shadow);}
+  .clue-caption{font-style:italic; color:var(--cream); font-size:.95rem; margin-bottom:14px; line-height:1.5; white-space:pre-line;}
+  .photo-nav{display:none; align-items:center; justify-content:center; gap:14px; margin:-4px 0 12px;}
+  .carousel-dots{display:flex; gap:6px; justify-content:center;}
+  .carousel-dots .cdot{width:7px; height:7px; border-radius:50%; background:var(--brass-dim); opacity:.5;}
+  .carousel-dots .cdot.active{background:var(--brass); opacity:1;}
+  .nav-arrow{display:flex; background:var(--panel); border:1.5px solid var(--brass-dim); color:var(--brass-light); border-radius:50%; width:32px; height:32px; font-size:1.05rem; cursor:pointer; align-items:center; justify-content:center; padding:0; line-height:1; flex-shrink:0;}
+  .nav-arrow:hover{border-color:var(--brass); color:var(--cream);}
+  .nav-arrow:active{transform:translateY(1px);}
+  .nav-arrow:disabled{opacity:.3; cursor:default; pointer-events:none;}
   .question{font-family:var(--font-display); font-size:1.4rem; color:var(--cream); margin-bottom:16px; line-height:1.25;}
   .options{display:flex; flex-direction:column; gap:10px; margin-bottom:6px;}
   .opt{text-align:left; background:var(--ink); border:1.5px solid var(--brass-dim); color:var(--cream); border-radius:4px; padding:13px 15px; font-family:var(--font-body); font-size:.94rem; cursor:pointer; line-height:1.4;}
   .opt:active{transform:scale(.99);}
+  .opt.selected{border-color:var(--brass); background:rgba(0,185,190,.14); box-shadow:0 0 0 1px var(--brass) inset;}
   .opt.correct{background:rgba(76,122,109,.35); border-color:var(--correct-light); color:var(--correct-light);}
   .opt.wrong{background:rgba(181,80,47,.3); border-color:var(--wrong-light); color:var(--wrong-light);}
   .opt.dim{opacity:.5;}
@@ -96,6 +112,10 @@
 
   .reveal{margin-top:14px; display:none;}
   .reveal.show{display:block; animation:fadeIn .3s ease;}
+  .reveal-verdict{font-family:var(--font-display); font-size:1.5rem; margin-bottom:10px;}
+  .reveal-verdict.good{color:var(--correct-light);}
+  .reveal-verdict.bad{color:var(--wrong-light);}
+  .reveal-pts{font-family:var(--font-body); font-size:.82rem; color:var(--brass-light); font-weight:600; margin-left:8px; vertical-align:middle;}
   .reveal-fact{padding:13px 15px; border-left:3px solid var(--brass); background:rgba(201,162,39,.08); border-radius:0 4px 4px 0; font-size:.88rem; color:var(--cream);}
   .fragment{margin-top:10px; padding:12px 14px; background:rgba(201,162,39,.14); border:1px dashed var(--brass); border-radius:4px; font-size:.83rem; color:var(--brass-light); display:flex; gap:9px; align-items:flex-start; animation:popIn .4s ease;}
   @keyframes popIn{from{opacity:0; transform:scale(.88) rotate(-2deg);} to{opacity:1; transform:scale(1) rotate(0);}}
@@ -104,20 +124,33 @@
   .spacer{flex:1;}
 
   .map-wrap{position:relative; border-radius:6px; overflow:hidden; margin-bottom:10px; box-shadow:0 8px 24px var(--shadow); background:var(--paper);}
-  svg#mapSvg{display:block; width:100%; height:auto; touch-action:none; cursor:crosshair;}
+  svg#mapSvg{display:block; width:100%; height:auto; touch-action:none; cursor:default;}
   .map-hint{font-size:.85rem; text-align:center; color:var(--muted); margin-bottom:12px; min-height:1.3em;}
 
+  .reveal-star, .reveal-line, .reveal-treasure{animation:fadeInStar .6s ease both;}
+  @keyframes fadeInStar{from{opacity:0;} to{opacity:1;}}
+  .reveal-treasure .pulse{animation:treasurePulse 1.6s ease-in-out infinite;}
+  @keyframes treasurePulse{0%,100%{opacity:.6; r:18;} 50%{opacity:0; r:28;}}
+
   .poi{cursor:pointer;}
+  .poi.locked{opacity:.32; pointer-events:none;}
+  .poi.locked .halo{display:none;}
+  .start-badge{animation:fadeInStar .4s ease both;}
+  .start-ring{animation:startPulse 1.6s ease-in-out infinite;}
+  @keyframes startPulse{0%{r:22; opacity:.9;} 100%{r:42; opacity:0;}}
   .poi .halo{fill:none; stroke:var(--brass); stroke-width:2;}
   .poi:not(.found) .halo{animation:poiPulse 1.9s ease-in-out infinite;}
-  @keyframes poiPulse{0%{r:13; opacity:.6;} 75%{r:23; opacity:0;} 100%{r:23; opacity:0;}}
-  .poi .backing{fill:var(--cream); stroke:var(--paper-ink); stroke-width:1; opacity:.96; transition:stroke .15s ease;}
-  .poi .glyph{stroke:var(--paper-ink); stroke-width:1.6; fill:none;}
-  .poi.found .glyph{opacity:.45;}
-  .poi .check{display:none; stroke:var(--correct); stroke-width:2.3; fill:none; stroke-linecap:round; stroke-linejoin:round;}
+  @keyframes poiPulse{0%{r:9; opacity:.6;} 75%{r:19; opacity:0;} 100%{r:19; opacity:0;}}
+  .poi .pin-shadow{fill:rgba(0,0,0,.35);}
+  .poi .pin-body{fill:var(--wrong); stroke:var(--paper-ink); stroke-width:1.5; transition:fill .15s ease;}
+  .poi .pin-head{fill:var(--cream); stroke:var(--paper-ink); stroke-width:1.5;}
+  .poi .glyph{stroke:var(--paper-ink); stroke-width:2; fill:none;}
+  .poi.found .glyph{opacity:.4;}
+  .poi.found .pin-body{fill:var(--brass-dim);}
+  .poi .check{display:none; stroke:var(--correct); stroke-width:3; fill:none; stroke-linecap:round; stroke-linejoin:round;}
   .poi.found .check{display:block;}
-  .poi.found .backing{opacity:.75;}
-  .poi:hover .backing{stroke:var(--brass); stroke-width:2;}
+  .poi.found .pin-head{opacity:.85;}
+  .poi:hover .pin-body{fill:var(--brass);}
   .hotspot{cursor:pointer;}
 
   .toast{position:fixed; left:50%; bottom:26px; transform:translate(-50%,16px); background:var(--panel); color:var(--cream); border:1px solid var(--brass-dim); padding:10px 18px; border-radius:999px; font-size:.83rem; opacity:0; pointer-events:none; transition:all .3s ease; z-index:30; max-width:82%; text-align:center; box-shadow:0 6px 16px var(--shadow);}
@@ -141,7 +174,7 @@
   th:last-child, td:last-child{text-align:right;}
   td{padding:12px 8px; border-top:1px solid rgba(201,162,39,.15); font-size:.94rem;}
   .rank{font-family:var(--font-display); font-size:1.2rem; color:var(--brass-light); width:28px;}
-  .rank.gold{color:#E7C766;} .rank.silver{color:#cfd6d4;} .rank.bronze{color:#c98a4f;}
+  .rank.gold{color:var(--brass-light);} .rank.silver{color:#d8d6e0;} .rank.bronze{color:var(--wrong-light);}
   .me-row td{background:rgba(201,162,39,.1);}
   .lb-empty{text-align:center; color:var(--muted); padding:30px 0; font-size:.9rem;}
   .lb-note{font-size:.78rem; color:var(--muted); text-align:center; margin-top:4px;}
@@ -157,7 +190,10 @@
 
   <div class="topbar" id="topbar">
     <div class="topbar-row">
-      <div class="timer" id="timerEl">5:00</div>
+      <div class="topbar-left">
+        <button class="menu-btn" id="menuBtn" aria-label="Back to menu" title="Back to menu">&#8592;</button>
+        <div class="timer" id="timerEl">5:00</div>
+      </div>
       <div class="trail-label" id="trailLabel"></div>
     </div>
     <div class="progress-trail" id="progressTrail">
@@ -172,30 +208,22 @@
   <section class="screen active" data-screen="welcome">
     <div class="hero-compass">
       <svg viewBox="0 0 60 60" width="52" height="52">
-        <circle cx="30" cy="30" r="26" fill="none" stroke="#8a7332" stroke-width="1.5"/>
-        <circle cx="30" cy="30" r="19" fill="none" stroke="#8a7332" stroke-width="1"/>
+        <circle cx="30" cy="30" r="26" fill="none" stroke="#15788c" stroke-width="1.5"/>
+        <circle cx="30" cy="30" r="19" fill="none" stroke="#15788c" stroke-width="1"/>
         <g id="needle">
-          <path d="M30,9 L34.5,30 L30,51 L25.5,30 Z" fill="#C9A227"/>
-          <path d="M30,9 L34.5,30 L30,30 Z" fill="#E7C766"/>
+          <path d="M30,9 L34.5,30 L30,51 L25.5,30 Z" fill="#00b9be"/>
+          <path d="M30,9 L34.5,30 L30,30 Z" fill="#ffeecc"/>
         </g>
-        <circle cx="30" cy="30" r="3" fill="#0B2027" stroke="#C9A227" stroke-width="1"/>
+        <circle cx="30" cy="30" r="3" fill="#2c293d" stroke="#00b9be" stroke-width="1"/>
       </svg>
     </div>
-    <h1>X Marks The Spot</h1>
-    <p class="lede">An explorable map. One house. Five minutes on the clock.</p>
-
-    <div class="stamps">
-      <span class="stamp">Born: Bangor</span>
-      <span class="stamp">Raised: Porthmadog</span>
-      <span class="stamp">Ysgol Eifionydd</span>
-      <span class="stamp">Bristol &middot; Physics &amp; French</span>
-    </div>
+    <h1>Croeso i Borthmadog<span class="h1-sub">Welcome to Porthmadog</span></h1>
+    <p class="lede">An explorable map. 5 minutes on the clock, find the treasure.</p>
 
     <div class="rules">
-      <p><strong style="color:var(--cream)">How it works:</strong> Click around the map. Four markers hide real facts about me &mdash; planted among some very fake options.</p>
-      <p>Explore in any order. Answering &mdash; right or wrong &mdash; hands you a fragment of where to look. Some other things on the map do something too, if you're curious.</p>
-      <p>When you're ready: drop one pin for the house I grew up in. Closest pin wins.</p>
-      <p>5 minutes total. The clock starts the second you hit go.</p>
+      <p><strong style="color:var(--cream)">How it works:</strong> Click around the map markers to find out more about me, my family and my hometown.</p>
+      <p>Some of the markers have a quiz question &mdash; get it right and a star lights up on the map. Find all 4 and the lines will cross to reveal where the treasure is&hellip; X marks the spot!</p>
+      <p>The clock keeps running once you find it, so the faster you get there, the bigger your bonus.</p>
     </div>
 
     <input type="text" id="nameInput" placeholder="Your name (goes on your result)" maxlength="24">
@@ -207,9 +235,8 @@
     <div class="map-wrap">
       <svg id="mapSvg" viewBox="0 0 400 580" xmlns="http://www.w3.org/2000/svg"></svg>
     </div>
-    <div class="map-hint" id="mapHint">Click the map to explore. Click open ground to drop your pin whenever you're ready.</div>
+    <div class="map-hint" id="mapHint">Start with the flag marked &ldquo;Start here&rdquo; on the Cob.</div>
     <div class="spacer"></div>
-    <button class="btn" id="mapConfirmBtn" style="display:none;">Lock in my guess</button>
     <button class="btn" id="mapResultsBtn" style="display:none;">See how I did</button>
   </section>
 
@@ -229,8 +256,16 @@
 <div class="sheet" id="clueSheet">
   <div class="sheet-handle"></div>
   <div class="clue-label" id="clueLabel"></div>
-  <div class="question" id="clueQuestion"></div>
+  <img class="clue-photo" id="cluePhoto" style="display:none;" alt="">
+  <div class="photo-nav" id="photoNav" style="display:none;">
+    <button class="nav-arrow" id="sheetPrevBtn" aria-label="Previous photo">&larr;</button>
+    <div class="carousel-dots" id="carouselDots"></div>
+    <button class="nav-arrow" id="sheetNextBtn" aria-label="Next photo">&rarr;</button>
+  </div>
+  <div class="clue-caption" id="clueCaption" style="display:none;"></div>
+  <div class="question" id="clueQuestion" style="display:none;"></div>
   <div class="options" id="clueOptions"></div>
+  <button class="btn" id="quizSubmitBtn" style="display:none; margin-top:4px;" disabled>Submit answer</button>
   <div class="reveal" id="clueReveal"></div>
   <button class="btn" id="sheetCloseBtn" style="display:none; margin-top:14px;">Back to the map</button>
 </div>
@@ -241,54 +276,126 @@
   "use strict";
 
   var MAP_W = 1158, MAP_H = 833;
-  var GRID_COLS = ['A','B','C','D'];
-  var GRID_X = [0, MAP_W*0.25, MAP_W*0.5, MAP_W*0.75, MAP_W];
-  var GRID_Y = [0, MAP_H*0.25, MAP_H*0.5, MAP_H*0.75, MAP_H];
-  function cellOf(x,y){
-    var ci=0, ri=0, i;
-    for(i=0;i<4;i++){ if(x>=GRID_X[i]) ci=i; }
-    for(i=0;i<4;i++){ if(y>=GRID_Y[i]) ri=i; }
-    return GRID_COLS[ci] + (ri+1);
-  }
-  // MOCKUP ONLY — placeholder until real pin locations are given
-  var TRUE_SPOT = {x:470, y:335};
-  var TRUE_CELL = cellOf(TRUE_SPOT.x, TRUE_SPOT.y);
-  var MAP_MAX_DIST = 450;
-  var MAP_MAX_POINTS = 250;
+  var TREASURE_SPOT = {x:453, y:539};
+  var SPEED_BONUS_MAX = 200;
   var GAME_SECONDS = 300;
 
   var CLUES = [
     {
-      id:'orienteering', shortName:'The sport', poi:{x:200,y:520,icon:'compass'},
-      question:"Growing up, the sport I actually competed in was\u2026",
-      options:["Orienteering \u2014 racing through forest with a map and compass","Competitive sheepdog trials","Extreme ironing","Synchronised swimming"],
-      correct:0,
-      reveal:"Orienteering. Running flat out through a forest, alone, trying to read a map faster than you can think.",
-      mapHint:"Rule out the far edges \u2014 it isn't in row 1 or row 4."
+      id:'moelygest', shortName:'The hill', poi:{x:112,y:412,icon:'hill'}, star:'bottom_left',
+      cards:[
+        {
+          photo:'moelygest-stones.jpg',
+          caption:"This is Moel y Gest, which looms over Porthmadog. It's too insignificant for the English to have given it a proper useful English name, so we're stuck calling it Moel y Gest. It's not insignificant enough for them not to start a quarry though, hence the big hole in the middle. The stone circle in the foreground was built in 1987 when Porthmadog hosted the National Eisteddfod \u2014 the biggest Welsh cultural festival, with traditional singing, dancing, poetry and art competitions. On the left is the nursery, a little forest \u2014 I used to go running there with my dad as a kid."
+        },
+        {
+          photo:'moelygest-summit.jpg',
+          caption:"Here's me at the summit when I was little. We used to think there was treasure up here when we were kids!",
+          question:"Want a clue for the treasure? Get this question right \u2014 what other sport did I do growing up in Porthmadog in the 90s?",
+          options:["Orienteering","Sailing","Rugby","Pole vault"],
+          correct:0,
+          reveal:"Orienteering. Running flat out through a forest, alone, trying to read a map faster than you can think."
+        }
+      ]
     },
     {
-      id:'peaks', shortName:'The challenge', poi:{x:950,y:120,icon:'flag'},
-      question:"In 2009 I did the Welsh 15 Peaks. How long did it take me?",
-      options:["16 hours","3 days, with pub stops","6 hours flat","30 hours, mostly spent lost"],
-      correct:0,
-      reveal:"16 hours. Fifteen summits, one very long day, and a strong argument for never doing it again.",
-      mapHint:"Close enough to hear the tide \u2014 it's in column A or column B."
+      id:'peaks', shortName:'The challenge', poi:{x:785,y:561,icon:'mountain'}, star:'bottom_mid',
+      cards:[
+        {
+          photo:'snowdon-view.jpg',
+          caption:"That's the highest mountain in England and Wales in the distance. It was 'discovered' by the English in the 11th century, who named it Snowdon and called the region Snowdonia. Very creative. Never mind that the locals had already spotted the mountain and called it Yr Wyddfa \u2014 they even had a name for the whole region: Eryri."
+        },
+        {
+          photo:'fifteen-peaks-cairn.jpg',
+          caption:"Snowdon is 3,560ft (1,085m) tall, and there are another 14 mountains in Eryri over 3,000ft \u2014 which makes for a simple '15 Peaks' challenge.",
+          question:"How long did it take me and my brother-in-law to do the 15 Peaks challenge in 2009, reaching the summit of each one?",
+          options:["8 hours","16 hours","24 hours","32 hours"],
+          correct:1,
+          reveal:"16 hours. Fifteen summits, one very long day, and a strong argument for never doing it again."
+        }
+      ]
     },
     {
-      id:'border', shortName:'The near miss', poi:{x:170,y:710,icon:'boat'},
-      question:"In 1997, visiting a friend's family in Hong Kong, I nearly got arrested at the China border. What actually happened?",
-      options:["Got on the wrong bus \u2014 its last stop was the last stop before the mainland border","Tried to sneak a Welsh flag across as a prank","Got caught photographing a checkpoint","Argued with a guard about a visa stamp"],
-      correct:0,
-      reveal:"Just the bus. Wrong stop, right year \u2014 1997, the handover \u2014 an extremely wrong place to look lost.",
-      mapHint:"On the Porthmadog side of the Cob \u2014 that narrows it to row 2 or row 3."
+      id:'chopsuey', shortName:'The near miss', poi:{x:398,y:349,icon:'shop'}, star:'top',
+      cards:[
+        {
+          photo:'chop-suey-house.jpg',
+          caption:"It's the Happy Chop Suey House! The only Chinese in Port in the 80s\u2026 Here's a question for you \u2014 get it right and you win a clue!",
+          question:"In 1997 I was almost arrested on the border between Hong Kong and China. Why?",
+          options:["Arguing with a border guard about a visa stamp","Caught taking a photo of the checkpoint","Got off the bus at the wrong stop","Trying to sneak a Welsh flag into China"],
+          correct:2,
+          reveal:"Just the bus. Wrong stop, right year \u2014 1997, the handover \u2014 an extremely wrong place to look lost."
+        }
+      ]
     },
     {
-      id:'welsh', shortName:'The language', poi:{x:530,y:180,icon:'quill'},
-      question:"Translate: \u201cDw i wrth fy modd yn crwydro.\u201d",
-      options:["I love wandering / I'm in my element roaming","I am extremely lost right now","This sheep is not mine","I'd like a second breakfast"],
-      correct:0,
-      reveal:"\u201cI love wandering.\u201d Fairly on the nose, given what happens next.",
-      mapHint:"Stop wandering \u2014 it's square " + TRUE_CELL + "."
+      id:'welsh', shortName:'The language', poi:{x:530,y:180,icon:'quill'}, star:'right',
+      cards:[
+        {
+          question:"Translate: \u201cDw i wrth fy modd yn crwydro.\u201d",
+          options:["I love wandering / I'm in my element roaming","I am extremely lost right now","This sheep is not mine","I'd like a second breakfast"],
+          correct:0,
+          reveal:"\u201cI love wandering.\u201d Fairly on the nose, given what happens next."
+        }
+      ]
+    },
+    {
+      id:'ysgoleifionydd', shortName:'School days', poi:{x:428,y:220,icon:'quill'}, star:'right',
+      cards:[
+        {
+          photo:'ysgol-eifion-wyn.jpg',
+          caption:"This is Ysgol Eifion Wyn, my primary school. I hated it. It's not there any more \u2014 it's turned into Tesco."
+        },
+        {
+          photo:'ysgol-eifionydd.jpg',
+          caption:"This is Ysgol Eifionydd, my secondary school! I hated it even more. All lessons in both primary and secondary school were entirely in Welsh. Except for English class \u2014 that was through English.\n\nAnyway, here's a little Welsh test for you \u2014 get it right and you win a clue!",
+          question:"What does \u2018Twll tin bob Sais\u2019 mean in English?",
+          options:["[Expletive] to the English","The sheep is not mine","I'd like a second breakfast","I'm so lost, I don't know what's going on right now"],
+          correct:0,
+          reveal:"\u2018[Expletive] to the English.\u2019 A phrase every Welsh kid learns early, whether they're taught it in class or not."
+        }
+      ]
+    }
+  ];
+
+  var FLAVORS = [
+    {
+      id:'cob', shortName:'The Cob', poi:{x:722,y:536,icon:'flag'}, isStart:true,
+      cards:[
+        {
+          photo:'cob-view.jpg',
+          caption:"Welcome to Porthmadog \u2014 or in Welsh, Croeso i Borthmadog! Let's start with a short history lesson. The Cob is a crucial part of Porthmadog history. Without it 'Port' wouldn't exist, as most of the town is below sea level! Some English guy (it's always the English) rocked up a couple of hundred years ago and decided this massive estuary would make great farmland and would make him millions if he could sell the land. So he tried to build an embankment to keep the sea out. After 7 years and 2 attempts, the mile-long Cob was completed in 1814. The railway was added later, and transported slate from the mines up in the mountains down to Porthmadog harbour, to be shipped all over the world. Porthmadog grew around this brand new harbour."
+        },
+        {photo:'cob-harbour.jpg', caption:"Here's me and my husband Jai at the harbour."},
+        {photo:'cob-christmas.jpg', caption:"Here's Jai again, with my mum and dad on the Cob last Christmas."},
+        {photo:'cob-funrun.jpg', caption:"Finally, here I am running the Cob Fun Run. A whole mile is a long way to run when you're in primary school! The Fun Run no longer exists \u2014 ruined by health and safety, insurance and having to close roads and all that."}
+      ]
+    },
+    {
+      id:'coliseum', shortName:'The Coliseum', poi:{x:398,y:292,icon:'building'},
+      cards:[
+        {
+          photo:'coliseum.jpg',
+          caption:"The Coliseum \u2014 a Porthmadog landmark. I saw my first film here: The NeverEnding Story. I was petrified! The world premiere of First Knight (an awful Richard Gere King Arthur film) was held here in 1995. Then some company \u2014 probably English \u2014 bought the building in the 2000s just to knock it down, and left a pile of rubble and weeds. \ud83d\ude22"
+        }
+      ]
+    },
+    {
+      id:'borthygest', shortName:'Borth y Gest', poi:{x:379,y:730,icon:'wave'},
+      cards:[
+        {photo:'borthygest-bay.jpg', caption:"Borth y Gest is a lovely part of town with a nice secluded bay…"},
+        {photo:'borthygest-cove.jpg', caption:"…and hidden beaches."},
+        {photo:'borthygest-toddler.jpg', caption:"We used to spend a lot of time here as a young family — here I am digging in the bay."}
+      ]
+    },
+    {
+      id:'portmeirion', shortName:'Portmeirion', poi:{x:1083,y:802,icon:'building'},
+      cards:[
+        {photo:'portmeirion.jpg', caption:"Portmeirion! Famous for the 60s TV show The Prisoner. It's where Porthmadog folk go for fancy times\u2026"},
+        {photo:'brother-wedding.jpg', caption:"Like my brother's wedding\u2026"},
+        {photo:'family-dinner.jpg', caption:"Or my mum's 70th birthday\u2026"},
+        {photo:'my-birthday.jpg', caption:"Or MY birthday!"}
+      ]
     }
   ];
 
@@ -296,12 +403,30 @@
     {key:'compass', x:1090, y:70, r:30, msg:"Still points north. Mostly out of habit."}
   ];
 
-  var state = {
-    name:'', answersById:{}, mapScore:0, mapDist:null, total:0,
-    timeLeft:GAME_SECONDS, timerHandle:null, qStartTs:0, ended:false, submitted:false
+  // The 4 fixed star positions from the reference map, and the diagonal
+  // pairs that draw a line once both stars in the pair are revealed.
+  var STAR_POINTS = {
+    top:        {x:288,  y:181},
+    right:      {x:1040, y:264},
+    bottom_mid: {x:491,  y:622},
+    bottom_left:{x:173,  y:669}
   };
-  var mapState = {guess:null, locked:false};
+  var STAR_LINES = [['top','bottom_mid'], ['bottom_left','right']];
+  var STAR_IDS = [].concat.apply([], STAR_LINES);
+  // Each CLUES entry that should light up a star sets star:'<one of the STAR_POINTS ids above>'.
+  // More than one clue can point at the same star (a backup question), so
+  // adding a 5th/6th quiz clue never needs a new star — it just gives
+  // another way to reveal one of these 4.
+
+  var state = {
+    name:'', answersById:{}, viewedFlavors:{}, starsById:{}, treasureFound:false, speedBonus:0, total:0,
+    timeLeft:GAME_SECONDS, timerHandle:null, qStartTs:0, ended:false, submitted:false, tourStarted:false
+  };
+  var HINT_LOCKED = 'Start with the flag marked “Start here” on the Cob.';
+  var HINT_UNLOCKED = 'Click the map markers to explore Porthmadog — get quiz questions right to reveal the treasure stars.';
   var toastTimer = null;
+
+  function clueById(id){ return CLUES.filter(function(c){ return c.id===id; })[0]; }
 
   function $(sel){ return document.querySelector(sel); }
   function show(name){
@@ -328,20 +453,19 @@
   function forceEnd(){
     if(state.ended) return;
     closeSheet();
-    mapState.locked = true;
     finishGame();
   }
   function updateProgress(){
-    CLUES.forEach(function(c,i){
+    STAR_IDS.forEach(function(id,i){
       var dot = document.querySelector('.pt-dot[data-i="'+i+'"]');
-      if(dot) dot.classList.toggle('done', !!state.answersById[c.id]);
+      if(dot) dot.classList.toggle('done', !!state.starsById[id]);
     });
     var flagDot = document.querySelector('.pt-dot[data-i="4"]');
-    if(flagDot) flagDot.classList.toggle('done', mapState.locked);
+    if(flagDot) flagDot.classList.toggle('done', !!state.treasureFound);
   }
   function updateHuntStatus(){
-    var count = Object.keys(state.answersById).length;
-    $('#trailLabel').textContent = count + '/4 found';
+    var count = STAR_IDS.filter(function(id){ return !!state.starsById[id]; }).length;
+    $('#trailLabel').textContent = count + '/4 stars';
   }
   function showToast(msg){
     var t=$('#toast'); t.textContent=msg; t.classList.add('show');
@@ -357,6 +481,22 @@
     renderHunt();
   });
 
+  function backToMenu(){
+    if(state.timerHandle) clearInterval(state.timerHandle);
+    closeSheet();
+    state.name=''; state.answersById={}; state.viewedFlavors={}; state.starsById={}; state.treasureFound=false; state.speedBonus=0; state.total=0;
+    state.timeLeft=GAME_SECONDS; state.timerHandle=null; state.qStartTs=0; state.ended=false; state.submitted=false; state.tourStarted=false;
+    $('#nameInput').value='';
+    $('#nameWarning').style.display='none';
+    $('#topbar').style.display='none';
+    $('#mapHint').textContent=HINT_LOCKED;
+    $('#mapResultsBtn').style.display='none';
+    document.querySelectorAll('.pt-dot').forEach(function(d){ d.classList.remove('done'); });
+    document.querySelectorAll('.poi').forEach(function(p){ p.classList.remove('found'); });
+    show('welcome');
+  }
+  $('#menuBtn').addEventListener('click', backToMenu);
+
   function renderHunt(){
     updateProgress();
     updateHuntStatus();
@@ -366,73 +506,157 @@
 
   // ---------- sheet ----------
   function openSheet(){ $('#sheetBackdrop').classList.add('show'); $('#clueSheet').classList.add('show'); }
-  function closeSheet(){ $('#sheetBackdrop').classList.remove('show'); $('#clueSheet').classList.remove('show'); }
+  function closeSheet(){
+    $('#sheetBackdrop').classList.remove('show'); $('#clueSheet').classList.remove('show');
+    if(sheetCtx.item && sheetCtx.item.isStart && !state.tourStarted){
+      state.tourStarted = true;
+      unlockPins();
+    }
+  }
+  function unlockPins(){
+    document.querySelectorAll('.poi.locked').forEach(function(p){ p.classList.remove('locked'); });
+    var badge = document.querySelector('.start-badge'); if(badge) badge.remove();
+    $('#mapHint').textContent = HINT_UNLOCKED;
+  }
   $('#sheetBackdrop').addEventListener('click', closeSheet);
   $('#sheetCloseBtn').addEventListener('click', closeSheet);
 
-  function buildRevealHtml(clue, correct, points){
-    return '<div class="reveal-fact">'+clue.reveal+(correct?'  (+'+points+' pts)':'  (+0 pts)')+'</div>'+
-      '<div class="fragment"><span class="ico">&#128220;</span><span><strong>Map fragment: </strong>'+clue.mapHint+'</span></div>';
+  function buildRevealHtml(card, correct, points, starAwarded){
+    var verdict = correct ? 'Correct!' : 'Not quite.';
+    var starNote = starAwarded ? '<div class="reveal-fact" style="margin-top:8px; border-left-color:var(--brass-light);">★ A star just appeared on the map.</div>' : '';
+    return '<div class="reveal-verdict '+(correct?'good':'bad')+'">'+verdict+'<span class="reveal-pts">+'+points+' pts</span></div>'+
+      '<div class="reveal-fact">'+card.reveal+'</div>' + starNote;
   }
 
-  function openClueSheet(id){
-    var clue = CLUES.filter(function(c){ return c.id===id; })[0];
-    if(!clue) return;
-    $('#clueLabel').textContent = clue.shortName;
-    $('#clueQuestion').textContent = clue.question;
-    var wrap = $('#clueOptions'); wrap.innerHTML='';
-    var revealEl = $('#clueReveal'); revealEl.classList.remove('show'); revealEl.innerHTML='';
-    $('#sheetCloseBtn').style.display='none';
+  var sheetCtx = {kind:null, item:null, cardIdx:0};
 
-    var already = state.answersById[id];
-    if(already){
-      clue.options.forEach(function(optText,i){
-        var b=document.createElement('button');
-        b.className='opt'; b.textContent=optText; b.disabled=true;
-        if(i===clue.correct) b.classList.add('correct');
-        else if(i===already.chosenIdx) b.classList.add('wrong');
-        else b.classList.add('dim');
-        wrap.appendChild(b);
-      });
-      revealEl.innerHTML = buildRevealHtml(clue, already.correct, already.points);
-      revealEl.classList.add('show');
-      $('#sheetCloseBtn').style.display='block';
-    } else {
-      state.qStartTs = Date.now();
-      clue.options.forEach(function(optText,i){
-        var b=document.createElement('button');
-        b.className='opt'; b.textContent=optText;
-        b.addEventListener('click', function(){ answerClue(clue,i,wrap); });
-        wrap.appendChild(b);
-      });
-    }
+  function openMarkerSheet(kind, id){
+    var list = kind==='clue' ? CLUES : FLAVORS;
+    var item = list.filter(function(m){ return m.id===id; })[0];
+    if(!item) return;
+    sheetCtx = {kind:kind, item:item, cardIdx:0};
+    if(kind==='clue' && state.answersById[id]){ sheetCtx.cardIdx = item.cards.length-1; }
+    renderCard();
     openSheet();
   }
 
-  function answerClue(clue, chosenIdx, wrap){
-    var buttons = wrap.querySelectorAll('.opt');
-    buttons.forEach(function(btn,i){
-      btn.disabled=true;
-      if(i===clue.correct) btn.classList.add('correct');
-      else if(i===chosenIdx) btn.classList.add('wrong');
-      else btn.classList.add('dim');
-    });
+  function renderDots(total, idx){
+    var el = $('#carouselDots');
+    if(total<=1){ el.style.display='none'; el.innerHTML=''; return; }
+    el.style.display='flex';
+    var html='';
+    for(var i=0;i<total;i++){ html += '<span class="cdot'+(i===idx?' active':'')+'"></span>'; }
+    el.innerHTML = html;
+  }
+
+  function renderCard(){
+    var item = sheetCtx.item, idx = sheetCtx.cardIdx;
+    var card = item.cards[idx];
+    var isLast = idx === item.cards.length-1;
+    var hasQuiz = !!card.question;
+
+    $('#clueLabel').textContent = item.shortName;
+
+    var photoEl = $('#cluePhoto'), capEl = $('#clueCaption');
+    if(card.photo){ photoEl.src = card.photo; photoEl.alt = item.shortName; photoEl.style.display='block'; }
+    else { photoEl.style.display='none'; photoEl.removeAttribute('src'); }
+    if(card.caption){ capEl.textContent = card.caption; capEl.style.display='block'; }
+    else { capEl.style.display='none'; capEl.textContent=''; }
+
+    $('#photoNav').style.display = item.cards.length>1 ? 'flex' : 'none';
+    renderDots(item.cards.length, idx);
+
+    var qEl = $('#clueQuestion'), wrap = $('#clueOptions');
+    var revealEl = $('#clueReveal'); revealEl.classList.remove('show'); revealEl.innerHTML='';
+    wrap.innerHTML='';
+    $('#sheetCloseBtn').style.display='none';
+    var showPrev = idx>0;
+    var showNext = !isLast && !hasQuiz;
+    $('#sheetPrevBtn').disabled = !showPrev;
+    $('#sheetNextBtn').disabled = !showNext;
+
+    var submitBtn = $('#quizSubmitBtn');
+    submitBtn.style.display='none';
+    submitBtn.disabled = true;
+
+    if(hasQuiz){
+      var already = sheetCtx.kind==='clue' && state.answersById[item.id];
+      if(already){
+        qEl.style.display='none';
+        wrap.style.display='none';
+        revealEl.innerHTML = buildRevealHtml(card, already.correct, already.points, already.correct && !!item.star && !!state.starsById[item.star]);
+        revealEl.classList.add('show');
+        $('#sheetCloseBtn').style.display='block';
+      } else {
+        qEl.style.display='block'; qEl.textContent = card.question;
+        wrap.style.display='flex';
+        state.qStartTs = Date.now();
+        sheetCtx.selectedIdx = null;
+        submitBtn.style.display='block';
+        card.options.forEach(function(optText,i){
+          var b=document.createElement('button');
+          b.className='opt'; b.textContent=optText;
+          b.addEventListener('click', function(){
+            wrap.querySelectorAll('.opt').forEach(function(o){ o.classList.remove('selected'); });
+            b.classList.add('selected');
+            sheetCtx.selectedIdx = i;
+            submitBtn.disabled = false;
+          });
+          wrap.appendChild(b);
+        });
+        submitBtn.onclick = function(){
+          if(sheetCtx.selectedIdx==null) return;
+          answerCard(item, card, sheetCtx.selectedIdx);
+        };
+      }
+    } else {
+      qEl.style.display='none';
+      wrap.style.display='none';
+      if(sheetCtx.kind==='flavor'){
+        state.viewedFlavors[item.id] = true;
+        var poiElF = document.querySelector('.poi[data-id="'+item.id+'"]');
+        if(poiElF) poiElF.classList.add('found');
+      }
+      if(isLast){ $('#sheetCloseBtn').style.display='block'; }
+    }
+  }
+
+  function answerCard(item, card, chosenIdx){
     var elapsed=(Date.now()-state.qStartTs)/1000;
-    var correct = chosenIdx===clue.correct;
+    var correct = chosenIdx===card.correct;
     var points=0;
     if(correct){ var bonus=Math.max(0,Math.round(20-Math.min(elapsed,20))); points=100+bonus; }
-    state.answersById[clue.id] = {correct:correct, points:points, chosenIdx:chosenIdx};
+    state.answersById[item.id] = {correct:correct, points:points, chosenIdx:chosenIdx};
 
+    var newStarRevealed = correct && !!item.star && !state.starsById[item.star];
+
+    $('#clueQuestion').style.display='none';
+    $('#clueOptions').style.display='none';
+    $('#quizSubmitBtn').style.display='none';
     var revealEl=$('#clueReveal');
-    revealEl.innerHTML = buildRevealHtml(clue, correct, points);
+    revealEl.innerHTML = buildRevealHtml(card, correct, points, newStarRevealed);
     revealEl.classList.add('show');
     $('#sheetCloseBtn').style.display='block';
 
-    var poiEl = document.querySelector('.poi[data-id="'+clue.id+'"]');
+    var poiEl = document.querySelector('.poi[data-id="'+item.id+'"]');
     if(poiEl) poiEl.classList.add('found');
+
+    if(newStarRevealed){
+      state.starsById[item.star] = true;
+      renderStars();
+      checkTreasureComplete();
+    }
+
     updateProgress();
     updateHuntStatus();
   }
+
+  $('#sheetPrevBtn').addEventListener('click', function(){
+    if(sheetCtx.cardIdx>0){ sheetCtx.cardIdx--; renderCard(); }
+  });
+  $('#sheetNextBtn').addEventListener('click', function(){
+    sheetCtx.cardIdx++; renderCard();
+  });
 
   // ---------- map ----------
   function svgAttrs(attrs){ var s=''; for(var k in attrs){ s+=' '+k+'="'+attrs[k]+'"'; } return s; }
@@ -461,19 +685,6 @@
     }
     return out;
   }
-  function gridLabel(x,y,txt){
-    return '<circle cx="'+x+'" cy="'+y+'" r="12" fill="var(--paper)" stroke="var(--brass-dim)" stroke-width="1" opacity="0.92"/>'+
-      '<text x="'+x+'" y="'+(y+4)+'" font-family="Inter, sans-serif" font-size="12" font-weight="700" fill="var(--paper-ink)" text-anchor="middle">'+txt+'</text>';
-  }
-  function gridOverlay(){
-    var out='<g opacity="0.6">'; var i;
-    for(i=1;i<4;i++){ out += '<line x1="'+GRID_X[i]+'" y1="'+GRID_Y[0]+'" x2="'+GRID_X[i]+'" y2="'+GRID_Y[4]+'" stroke="var(--brass-light)" stroke-width="1.5" stroke-dasharray="1,5"/>'; }
-    for(i=1;i<4;i++){ out += '<line x1="'+GRID_X[0]+'" y1="'+GRID_Y[i]+'" x2="'+GRID_X[4]+'" y2="'+GRID_Y[i]+'" stroke="var(--brass-light)" stroke-width="1.5" stroke-dasharray="1,5"/>'; }
-    out += '</g>';
-    for(i=0;i<4;i++){ var cx=(GRID_X[i]+GRID_X[i+1])/2; out += gridLabel(cx, 32, GRID_COLS[i]); }
-    for(i=0;i<4;i++){ var cy=(GRID_Y[i]+GRID_Y[i+1])/2; out += gridLabel(32, cy, String(i+1)); }
-    return out;
-  }
   function frameBorder(){
     var m1=10, m2=17;
     return '<rect x="'+m1+'" y="'+m1+'" width="'+(MAP_W-2*m1)+'" height="'+(MAP_H-2*m1)+'" fill="none" stroke="var(--brass)" stroke-width="3"/>'+
@@ -498,39 +709,118 @@
   }
   function poiIconPath(type){
     switch(type){
-      case 'compass': return '<circle class="glyph" cx="0" cy="0" r="7"/><path d="M0,-5 L2,0 L0,5 L-2,0 Z" fill="var(--paper-ink)" stroke="none"/>';
-      case 'flag': return '<line class="glyph" x1="0" y1="7" x2="0" y2="-7"/><path d="M0,-7 L8,-4 L0,-1 Z" fill="var(--paper-ink)" stroke="none"/>';
-      case 'boat': return '<path d="M-8,2 C-8,7 8,7 8,2 Z" fill="var(--paper-ink)" stroke="none"/><line class="glyph" x1="0" y1="2" x2="0" y2="-7"/><path d="M0,-7 L6,-3 L0,-1 Z" fill="var(--paper-ink)" stroke="none"/>';
-      case 'quill': return '<circle cx="-6" cy="0" r="3" fill="var(--paper-ink)" stroke="none"/><circle cx="6" cy="0" r="3" fill="var(--paper-ink)" stroke="none"/><line class="glyph" x1="-4" y1="0" x2="4" y2="0" stroke-width="4"/>';
+      case 'compass': return '<circle class="glyph" cx="0" cy="-48" r="9"/><path d="M0,-55 L2.5,-48 L0,-41 L-2.5,-48 Z" fill="var(--paper-ink)" stroke="none"/>';
+      case 'flag': return '<line class="glyph" x1="0" y1="-39" x2="0" y2="-58"/><path d="M0,-58 L10,-53 L0,-48 Z" fill="var(--paper-ink)" stroke="none"/>';
+      case 'shop': return '<path class="glyph" d="M-11,-42 L-11,-55 L-7,-60 L7,-60 L11,-55 L11,-42 Z"/><line class="glyph" x1="-11" y1="-48" x2="11" y2="-48"/><rect class="glyph" x="-4" y="-48" width="8" height="6"/>';
+      case 'quill': return '<circle cx="-8" cy="-48" r="4" fill="var(--paper-ink)" stroke="none"/><circle cx="8" cy="-48" r="4" fill="var(--paper-ink)" stroke="none"/><line class="glyph" x1="-5" y1="-48" x2="5" y2="-48" stroke-width="4.5"/>';
+      case 'hill': return '<path class="glyph" d="M-11,-41 Q-5,-59 0,-49 Q5,-59 11,-41 Z"/>';
+      case 'mountain': return '<path class="glyph" d="M-11,-41 L-3,-60 L2,-51 L6,-58 L11,-41 Z"/><path d="M-3,-60 L0,-55 L2,-51 L-1,-54 Z" fill="var(--paper-ink)" stroke="none" opacity="0.55"/>';
+      case 'building': return '<rect class="glyph" x="-9" y="-49" width="18" height="13"/><path class="glyph" d="M-9,-49 Q0,-61 9,-49"/>';
+      case 'star': return '<path class="glyph" d="M0,-61 L2.6,-53.4 L10.5,-53.4 L4.1,-48.7 L6.5,-41 L0,-45.7 L-6.5,-41 L-4.1,-48.7 L-10.5,-53.4 L-2.6,-53.4 Z" fill="var(--paper-ink)" stroke="none"/>';
+      case 'wave': return '<path class="glyph" d="M-11,-45 Q-7,-50 -3,-45 Q1,-40 5,-45 Q9,-50 11,-45" stroke-linecap="round"/><path class="glyph" d="M-11,-38 Q-7,-43 -3,-38 Q1,-33 5,-38 Q9,-43 11,-38" stroke-linecap="round"/>';
       default: return '';
     }
   }
-  function poiMarkup(clue){
-    var p = clue.poi;
-    return '<g class="poi" data-id="'+clue.id+'" transform="translate('+p.x+','+p.y+')">'+
-      '<circle class="halo" cx="0" cy="0" r="13"/>'+
-      '<circle class="backing" cx="0" cy="0" r="13"/>'+
+  function teardropPath(scale){
+    scale = scale || 1;
+    var a=(-4*scale).toFixed(2), b=(-16*scale).toFixed(2), c=(-24*scale).toFixed(2), d=(-28*scale).toFixed(2), e=(-48*scale).toFixed(2), f=(24*scale).toFixed(2), g=(4*scale).toFixed(2);
+    return 'M0,0 C'+a+','+b+' '+c+','+d+' '+c+','+e+' A'+f+','+f+' 0 1 1 '+f+','+e+' C'+f+','+d+' '+g+','+b+' 0,0 Z';
+  }
+  function poiMarkup(item, kind, locked){
+    var p = item.poi;
+    var d = teardropPath(1);
+    return '<g class="poi'+(locked?' locked':'')+'" data-id="'+item.id+'" data-kind="'+kind+'" transform="translate('+p.x+','+p.y+')">'+
+      '<circle class="halo" cx="0" cy="0" r="9"/>'+
+      '<path class="pin-shadow" d="'+d+'" transform="translate(2,3)"/>'+
+      '<path class="pin-body" d="'+d+'"/>'+
+      '<circle class="pin-head" cx="0" cy="-48" r="17"/>'+
       poiIconPath(p.icon)+
-      '<path class="check" d="M-4,0 L-1,3 L5,-4"/>'+
+      '<path class="check" d="M-6,-48 L-2,-44 L8,-54"/>'+
       '</g>';
   }
   function hotspotMarkup(h){
     return '<circle class="hotspot" data-key="'+h.key+'" cx="'+h.x+'" cy="'+h.y+'" r="'+h.r+'" fill="transparent"/>';
+  }
+  function startBadgeMarkup(item){
+    var p = item.poi;
+    return '<g class="start-badge" transform="translate('+p.x+','+p.y+')" pointer-events="none">'+
+      '<circle class="start-ring" cx="0" cy="-24" r="26" fill="none" stroke="var(--brass-light)" stroke-width="2.5"/>'+
+      '<rect x="-48" y="-106" width="96" height="27" rx="13.5" fill="var(--brass-light)"/>'+
+      '<path d="M0,-79 L-8,-63 L8,-63 Z" fill="var(--brass-light)"/>'+
+      '<text x="0" y="-88" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="var(--ink-2)" text-anchor="middle" letter-spacing="0.5">START HERE</text>'+
+      '</g>';
+  }
+
+  function starShape(cx,cy,r){
+    var outer=r, inner=r*0.45, pts=[];
+    for(var i=0;i<10;i++){
+      var ang = -Math.PI/2 + i*Math.PI/5;
+      var rad = i%2===0 ? outer : inner;
+      pts.push((cx+rad*Math.cos(ang)).toFixed(1)+','+(cy+rad*Math.sin(ang)).toFixed(1));
+    }
+    return 'M'+pts.join(' L')+' Z';
+  }
+  function starMarkup(id,x,y){
+    return '<g class="reveal-star" data-star="'+id+'">'+
+      '<path d="'+starShape(x+1.5,y+2.5,20)+'" fill="rgba(0,0,0,.35)"/>'+
+      '<path d="'+starShape(x,y,20)+'" fill="var(--brass-light)" stroke="var(--paper-ink)" stroke-width="1.5"/>'+
+      '</g>';
+  }
+  function lineMarkup(starId1,starId2){
+    var a=STAR_POINTS[starId1], b=STAR_POINTS[starId2];
+    return '<line class="reveal-line" x1="'+a.x+'" y1="'+a.y+'" x2="'+b.x+'" y2="'+b.y+'" stroke="var(--brass-light)" stroke-width="3" stroke-linecap="round" opacity="0.9"/>';
+  }
+  function treasureMarkup(){
+    return '<g class="reveal-treasure">'+
+      '<circle class="pulse" cx="'+TREASURE_SPOT.x+'" cy="'+TREASURE_SPOT.y+'" r="18" fill="none" stroke="var(--wrong-light)" stroke-width="2"/>'+
+      '<circle cx="'+TREASURE_SPOT.x+'" cy="'+TREASURE_SPOT.y+'" r="10" fill="var(--wrong)" stroke="var(--paper-ink)" stroke-width="2"/>'+
+      '</g>';
+  }
+  function renderStars(){
+    var layer = document.getElementById('starLayer');
+    if(!layer) return;
+    var html='';
+    STAR_LINES.forEach(function(pair){
+      if(state.starsById[pair[0]] && state.starsById[pair[1]]){ html += lineMarkup(pair[0], pair[1]); }
+    });
+    Object.keys(STAR_POINTS).forEach(function(starId){
+      if(state.starsById[starId]){ html += starMarkup(starId, STAR_POINTS[starId].x, STAR_POINTS[starId].y); }
+    });
+    if(state.treasureFound){ html += treasureMarkup(); }
+    layer.innerHTML = html;
+  }
+  function checkTreasureComplete(){
+    if(state.treasureFound) return;
+    var allDone = STAR_LINES.every(function(pair){ return state.starsById[pair[0]] && state.starsById[pair[1]]; });
+    if(!allDone) return;
+    state.treasureFound = true;
+    state.speedBonus = Math.round(SPEED_BONUS_MAX * Math.max(0,state.timeLeft) / GAME_SECONDS);
+    renderStars();
+    $('#mapHint').textContent = 'X marks the spot! Keep exploring, or tap “See how I did” when you’re ready.';
+    showToast('X marks the spot! +'+state.speedBonus+' pts for speed.');
+    $('#mapResultsBtn').style.display='block';
   }
 
   function buildMapSvg(){
     var svg=$('#mapSvg');
     svg.setAttribute('viewBox', '0 0 ' + MAP_W + ' ' + MAP_H);
     var html = '';
-    html += '<image href="porthmadog-map.png" x="0" y="0" width="'+MAP_W+'" height="'+MAP_H+'" preserveAspectRatio="xMidYMid slice"/>';
+    html += '<image href="porthmadog-map.jpg" x="0" y="0" width="'+MAP_W+'" height="'+MAP_H+'" preserveAspectRatio="xMidYMid slice"/>';
     html += '<rect x="0" y="0" width="'+MAP_W+'" height="'+MAP_H+'" fill="rgba(20,45,40,0.12)"/>';
-    html += gridOverlay();
     html += compassRose(1090,70);
     html += frameBorder();
     HOTSPOTS.forEach(function(h){ html += hotspotMarkup(h); });
-    CLUES.forEach(function(c){ html += poiMarkup(c); });
+    var locked = !state.tourStarted;
+    CLUES.forEach(function(c){ html += poiMarkup(c,'clue', locked); });
+    FLAVORS.forEach(function(f){ html += poiMarkup(f,'flavor', locked && !f.isStart); });
+    if(locked){
+      var startItem = FLAVORS.filter(function(f){ return f.isStart; })[0];
+      if(startItem) html += startBadgeMarkup(startItem);
+    }
+    html += '<g id="starLayer"></g>';
     svg.innerHTML = html;
     svg.addEventListener('pointerdown', onSvgTap);
+    renderStars();
   }
 
   function svgPoint(evt){
@@ -544,7 +834,7 @@
     var p = svgPoint(evt);
     var t = evt.target;
     var poiEl = t.closest ? t.closest('.poi') : null;
-    if(poiEl){ openClueSheet(poiEl.getAttribute('data-id')); return; }
+    if(poiEl){ openMarkerSheet(poiEl.getAttribute('data-kind'), poiEl.getAttribute('data-id')); return; }
     var hsEl = t.closest ? t.closest('.hotspot') : null;
     if(hsEl){
       var key = hsEl.getAttribute('data-key');
@@ -558,46 +848,7 @@
       }
       return;
     }
-    if(mapState.locked) return;
-    mapState.guess={x:p.x,y:p.y};
-    drawGuessPin(p.x,p.y);
-    $('#mapHint').textContent='Pin placed at square '+cellOf(p.x,p.y)+'. Click again to move it, or lock it in.';
-    $('#mapConfirmBtn').style.display='block';
   }
-
-  function drawGuessPin(x,y){
-    var old=document.getElementById('guessPin'); if(old) old.remove();
-    var svg=$('#mapSvg');
-    var g=document.createElementNS('http://www.w3.org/2000/svg','g');
-    g.setAttribute('id','guessPin');
-    g.innerHTML='<circle cx="'+x+'" cy="'+y+'" r="7" fill="var(--wrong)" stroke="var(--cream)" stroke-width="2"/><circle cx="'+x+'" cy="'+y+'" r="2" fill="var(--cream)"/>';
-    svg.appendChild(g);
-  }
-  $('#mapConfirmBtn').addEventListener('click', function(){
-    if(!mapState.guess) return;
-    mapState.locked=true;
-    $('#mapConfirmBtn').style.display='none';
-    var dx=mapState.guess.x-TRUE_SPOT.x, dy=mapState.guess.y-TRUE_SPOT.y;
-    var dist=Math.sqrt(dx*dx+dy*dy);
-    var pts=Math.round(Math.max(0, MAP_MAX_POINTS*(1-dist/MAP_MAX_DIST)));
-    state.mapDist=dist; state.mapScore=pts;
-    var svg=$('#mapSvg');
-    var g=document.createElementNS('http://www.w3.org/2000/svg','g');
-    g.innerHTML =
-      '<line x1="'+mapState.guess.x+'" y1="'+mapState.guess.y+'" x2="'+TRUE_SPOT.x+'" y2="'+TRUE_SPOT.y+'" stroke="var(--brass)" stroke-width="1.5" stroke-dasharray="3,4" opacity="0.85"/>'+
-      '<g transform="translate('+TRUE_SPOT.x+','+TRUE_SPOT.y+')">'+
-        '<path d="M0,-16 L5,-2 L0,2 L-5,-2 Z" fill="var(--brass)" stroke="var(--paper-ink)" stroke-width="1"/>'+
-        '<text x="0" y="18" font-family=\'IM Fell English, serif\' font-size="12" fill="var(--paper-ink)" text-anchor="middle">Rockcliffe</text>'+
-      '</g>';
-    svg.appendChild(g);
-    var flavor = dist<15 ? "Almost exactly on it. Unsettling." :
-                 dist<50 ? "Close \u2014 you'd have found it eventually." :
-                 dist<120 ? "Right square, wrong end of it." :
-                 "A bold guess, geographically speaking.";
-    $('#mapHint').textContent = flavor+' It was square '+TRUE_CELL+'. (+'+pts+' pts)';
-    updateProgress();
-    $('#mapResultsBtn').style.display='block';
-  });
   $('#mapResultsBtn').addEventListener('click', function(){ finishGame(); });
 
   function finishGame(){
@@ -605,14 +856,15 @@
     state.ended=true;
     if(state.timerHandle) clearInterval(state.timerHandle);
     var cluePts = CLUES.reduce(function(s,c){ return s+ptsOf(c.id); },0);
-    var total = cluePts + state.mapScore;
+    var speedBonus = state.treasureFound ? state.speedBonus : 0;
+    var total = cluePts + speedBonus;
     state.total=total;
     $('#totalScore').textContent=total;
     var bd=$('#breakdown'); bd.innerHTML='';
     CLUES.forEach(function(c){
       bd.innerHTML += '<div class="b-row"><span>'+c.shortName+'</span><span>'+ptsOf(c.id)+'</span></div>';
     });
-    bd.innerHTML += '<div class="b-row"><span>Pin drop</span><span>'+state.mapScore+'</span></div>';
+    bd.innerHTML += '<div class="b-row"><span>Treasure'+(state.treasureFound?' \u2014 speed bonus':' \u2014 not found')+'</span><span>'+speedBonus+'</span></div>';
     show('results');
     $('#codeBox').value = generateCode();
   }
@@ -626,8 +878,7 @@
     var payload = {
       n: state.name,
       s: state.total,
-      x: mapState.guess ? Math.round(mapState.guess.x) : null,
-      y: mapState.guess ? Math.round(mapState.guess.y) : null,
+      f: state.treasureFound ? 1 : 0,
       t: GAME_SECONDS - Math.max(0, state.timeLeft)
     };
     return 'XMTS1-' + b64urlEncode(JSON.stringify(payload));
