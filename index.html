@@ -91,7 +91,7 @@
 
   .clue-label{font-size:.8rem; color:var(--brass-light); letter-spacing:.3px; margin-bottom:6px; font-weight:600;}
   .clue-photo{width:100%; max-height:320px; object-fit:contain; background:var(--ink-2); border-radius:8px; margin-bottom:14px; display:block; box-shadow:0 6px 18px var(--shadow);}
-  .clue-caption{font-style:italic; color:var(--cream); font-size:.95rem; margin-bottom:14px; line-height:1.5; white-space:pre-line;}
+  .clue-caption{font-style:normal; font-weight:400; color:var(--cream); font-size:.95rem; margin-bottom:14px; line-height:1.5; white-space:pre-line;}
   .photo-nav{display:none; align-items:center; justify-content:center; gap:14px; margin:-4px 0 12px;}
   .carousel-dots{display:flex; gap:6px; justify-content:center;}
   .carousel-dots .cdot{width:7px; height:7px; border-radius:50%; background:var(--brass-dim); opacity:.5;}
@@ -276,25 +276,29 @@
   "use strict";
 
   var MAP_W = 1158, MAP_H = 833;
-  var TREASURE_SPOT = {x:453, y:539};
+  var TREASURE_SPOT = {x:455, y:369};
   var SPEED_BONUS_MAX = 200;
   var GAME_SECONDS = 300;
 
   var CLUES = [
     {
-      id:'moelygest', shortName:'The hill', poi:{x:112,y:412,icon:'hill'},
+      id:'moelygest', shortName:'Moel y Gest', poi:{x:112,y:412,icon:'hill'},
       cards:[
         {
-          photo:'moelygest-stones.jpg',
-          caption:"This is Moel y Gest, which looms over Porthmadog. It's too insignificant for the English to have given it a proper useful English name, so we're stuck calling it Moel y Gest. It's not insignificant enough for them not to start a quarry though, hence the big hole in the middle. The stone circle in the foreground was built in 1987 when Porthmadog hosted the National Eisteddfod \u2014 the biggest Welsh cultural festival, with traditional singing, dancing, poetry and art competitions. On the left is the nursery, a little forest \u2014 I used to go running there with my dad as a kid."
+          photo:'moelygest-hill.jpg',
+          caption:"This is Moel y Gest, which looms over Porthmadog. It's too insignificant for the English to have given it a proper useful English name, so we're stuck calling it Moel y Gest. It's not insignificant enough for them not to start a quarry though, hence the big hole in the middle."
         },
         {
-          photo:'moelygest-summit.jpg',
-          caption:"Here's me at the summit when I was little. We used to think there was treasure up here when we were kids!",
+          photo:'moelygest-young.jpg',
+          caption:"Here I am, very young, halfway up the hill."
+        },
+        {
+          photo:'moelygest-summit-friends.jpg',
+          caption:"And here I am with my brother and my friend at the summit. The village in the background is another lovely town called Cricieth, which has a really cool castle you can see overlooking the sea.",
           question:"Want a clue for the treasure? Get this question right \u2014 what other sport did I do growing up in Porthmadog in the 90s?",
           options:["Orienteering","Sailing","Rugby","Pole vault"],
-          correct:0,
-          reveal:"Orienteering. Running flat out through a forest, alone, trying to read a map faster than you can think."
+          correct:[0,1],
+          reveal:"Orienteering and sailing \u2014 I did both! Orienteering was running flat out through a forest, alone, trying to read a map faster than you can think. Sailing was a bit less relaxing."
         }
       ]
     },
@@ -350,11 +354,32 @@
       cards:[
         {
           photo:'coliseum.jpg',
-          caption:"The Coliseum \u2014 a Porthmadog landmark! The world premiere of 'First Knight' (awful Richard Gere King Arthur film) was held here in 1995, as it was filmed in the area.\n\nSome company (probably English) bought the building in the 2000s just to knock it down, and left an area of rubble and weeds. \ud83d\ude22\n\nAnyway, here's a chance to win a clue\u2026",
+          caption:"The Coliseum \u2014 a Porthmadog landmark! The world premiere of 'First Knight' (awful Richard Gere King Arthur film) was held here in 1995, as it was filmed in the area.\n\nSome company (probably English) bought the building in the 2000s just to knock it down, and left an area of rubble and weeds which is still there today. \ud83d\ude22\n\nAnyway, here's a chance to win a clue\u2026",
           question:"My first trip to the cinema was at the Coliseum, but what film did I see?",
           options:["Metropolis (1927)","Alien (1979)","The NeverEnding Story (1984)","First Knight \u2014 awful Richard Gere King Arthur film (1995)"],
           correct:2,
           reveal:"The NeverEnding Story. I was petrified \u2014 I hid behind the chair at the part where he has to run between the two statues with the laser eyes!"
+        }
+      ]
+    },
+    {
+      id:'maesgerddi', shortName:'Maes Gerddi', poi:{x:314,y:144,icon:'building'},
+      cards:[
+        {
+          photo:'maesgerddi-film.jpg',
+          caption:"This is where I lived as a very young kid, in one of the houses on the far left. This isn't me in the photo \u2014 it's shot from an actual film that was made here in the 70s! It was called One Hour to Zero, about a nuclear power station that was about to blow up. I saw it on TV when I was a kid and my mind was blown to see my actual house on the TV!"
+        },
+        {
+          photo:'maesgerddi-snowman.jpg',
+          caption:"Building snowmen."
+        },
+        {
+          photo:'maesgerddi-suitcase.jpg',
+          caption:"Although it looks like I'd had enough of their shit and was keen to move out, I have good memories from this house \u2014 watching the Seoul Olympics with my dad, a real-life earthquake rocking the whole house, and always having some other kids around to play with.\n\nSo for another clue\u2026",
+          question:"What was my favourite game when I was around 10 or 11?",
+          options:["Monopoly","Risk","Hero Quest","Chess"],
+          correct:2,
+          reveal:"Hero Quest! Plastic monsters, a cardboard dungeon, and my brothers arguing over whose turn it was."
         }
       ]
     }
@@ -362,15 +387,36 @@
 
   var FLAVORS = [
     {
+      id:'eisteddfod', shortName:'The Eisteddfod', poi:{x:74,y:123,icon:'building'},
+      cards:[
+        {
+          photo:'eisteddfod-stones.jpg',
+          caption:"The stone circle in the foreground was built in 1987, as Porthmadog was hosting the National Eisteddfod that year. The National Eisteddfod is the biggest Welsh cultural festival, with traditional singing, dancing, poetry and art competitions."
+        },
+        {
+          photo:'eisteddfod-site.jpg',
+          caption:"Here's the Eisteddfod site — the Eisteddfod is a huge deal in Wales, people travel from all over the country to visit every August. It visits a different town every year."
+        },
+        {
+          photo:'eisteddfod-stall.jpg',
+          caption:"My dad had a stall selling art. Here I am, bored out of my brains."
+        },
+        {
+          photo:'eisteddfod-painting.jpg',
+          caption:"But I did win 1st prize in the art competition for my age group! The category was 'Y dyfodol' (the future), so I painted tripods.\n\nShut up! No! My dad didn't help me at all!"
+        }
+      ]
+    },
+    {
       id:'cob', shortName:'The Cob', poi:{x:722,y:536,icon:'flag'}, isStart:true,
       cards:[
         {
           photo:'cob-view.jpg',
-          caption:"Welcome to Porthmadog \u2014 or in Welsh, Croeso i Borthmadog! Let's start with a short history lesson. The Cob is a crucial part of Porthmadog history. Without it 'Port' wouldn't exist, as most of the town is below sea level! Some English guy (it's always the English) rocked up a couple of hundred years ago and decided this massive estuary would make great farmland and would make him millions if he could sell the land. So he tried to build an embankment to keep the sea out. After 7 years and 2 attempts, the mile-long Cob was completed in 1814. The railway was added later, and transported slate from the mines up in the mountains down to Porthmadog harbour, to be shipped all over the world. Porthmadog grew around this brand new harbour."
+          caption:"Welcome to Porthmadog \u2014 or in Welsh, Croeso i Borthmadog! Let's start with a short history lesson.\n\nThe Cob is a crucial part of Porthmadog history. Without it 'Port' wouldn't exist, as most of the town is below sea level.\n\nSome English guy (it's always the English) rocked up a couple of hundred years ago and decided the estuary would make great farmland and help him make him millions. So he tried to build an embankment to keep the sea out.\n\nAfter 7 years and 2 attempts, the mile-long Cob was completed in 1814. The railway was added later, and transported slate from the mines up in the mountains down to Porthmadog harbour, to be shipped all over the world. Porthmadog grew around this brand new harbour."
         },
         {photo:'cob-harbour.jpg', caption:"Here's me and my husband Jai at the harbour."},
         {photo:'cob-christmas.jpg', caption:"Here's Jai again, with my mum and dad on the Cob last Christmas."},
-        {photo:'cob-funrun.jpg', caption:"Finally, here I am running the Cob Fun Run. A whole mile is a long way to run when you're in primary school! The Fun Run no longer exists \u2014 ruined by health and safety, insurance and having to close roads and all that."}
+        {photo:'cob-funrun.jpg', caption:"Finally, here I am running the Cob Fun Run. A whole mile is a long way to run when you're little! The Fun Run no longer exists \u2014 ruined by health and safety, insurance and having to close roads and all that."}
       ]
     },
     {
@@ -378,7 +424,8 @@
       cards:[
         {photo:'borthygest-bay.jpg', caption:"Borth y Gest is a lovely part of town with a nice secluded bay…"},
         {photo:'borthygest-cove.jpg', caption:"…and hidden beaches."},
-        {photo:'borthygest-toddler.jpg', caption:"We used to spend a lot of time here as a young family — here I am digging in the bay."}
+        {photo:'borthygest-toddler.jpg', caption:"We used to spend a lot of time here as a young family — here I am digging in the bay."},
+        {photo:'borthygest-sion.jpg', caption:"Here I am at the beach again, with Sion, our border collie."}
       ]
     },
     {
@@ -391,6 +438,32 @@
       ]
     }
   ];
+
+  var TREASURE_ITEM = {
+    id:'rockcliffe', shortName:'Rockcliffe', poi:{x:TREASURE_SPOT.x, y:TREASURE_SPOT.y, icon:'star'},
+    cards:[
+      {
+        photo:'rockcliffe-christmas.jpg',
+        caption:"Congratulations! You found the treasure! Don't get excited, it's just some more pics of my family home for most of my life — from the early 90s until the early 20s. Here it is all lit up for Christmas."
+      },
+      {
+        photo:'rockcliffe-uniform.jpg',
+        caption:"Me and my brother Gareth, obligatory September school uniform outside the front door photo."
+      },
+      {
+        photo:'rockcliffe-view.jpg',
+        caption:"Here's Gareth again sticking his head out of his bedroom window — the view behind is the best view in Porthmadog. The three mountains are called Cnicht, Moelwyn Mawr and Moelwyn Bach."
+      },
+      {
+        photo:'rockcliffe-dinner.jpg',
+        caption:"And here's all the family having Christmas dinner, with my Taid (grandad) at the back."
+      },
+      {
+        photo:'rockcliffe-brothers.jpg',
+        caption:"Finally! Here's me, Gareth and my youngest brother Robyn."
+      }
+    ]
+  };
 
   var HOTSPOTS = [
     {key:'compass', x:1090, y:70, r:30, msg:"Still points north. Mostly out of habit."}
@@ -521,7 +594,7 @@
   var sheetCtx = {kind:null, item:null, cardIdx:0};
 
   function openMarkerSheet(kind, id){
-    var list = kind==='clue' ? CLUES : FLAVORS;
+    var list = kind==='clue' ? CLUES : (kind==='treasure' ? [TREASURE_ITEM] : FLAVORS);
     var item = list.filter(function(m){ return m.id===id; })[0];
     if(!item) return;
     sheetCtx = {kind:kind, item:item, cardIdx:0};
@@ -612,8 +685,8 @@
     } else {
       qEl.style.display='none';
       wrap.style.display='none';
-      if(sheetCtx.kind==='flavor'){
-        state.viewedFlavors[item.id] = true;
+      if(sheetCtx.kind==='flavor' || sheetCtx.kind==='treasure'){
+        if(sheetCtx.kind==='flavor'){ state.viewedFlavors[item.id] = true; }
         var poiElF = document.querySelector('.poi[data-id="'+item.id+'"]');
         if(poiElF) poiElF.classList.add('found');
       }
@@ -621,9 +694,13 @@
     }
   }
 
+  function isCorrectChoice(card, idx){
+    return Array.isArray(card.correct) ? card.correct.indexOf(idx)!==-1 : idx===card.correct;
+  }
+
   function answerCard(item, card, chosenIdx){
     var elapsed=(Date.now()-state.qStartTs)/1000;
-    var correct = chosenIdx===card.correct;
+    var correct = isCorrectChoice(card, chosenIdx);
     var points=0;
     if(correct){ var bonus=Math.max(0,Math.round(20-Math.min(elapsed,20))); points=100+bonus; }
 
@@ -779,10 +856,11 @@
     return '<line class="reveal-line" x1="'+a.x+'" y1="'+a.y+'" x2="'+b.x+'" y2="'+b.y+'" stroke="var(--brass-light)" stroke-width="3" stroke-linecap="round" opacity="0.9"/>';
   }
   function treasureMarkup(){
-    return '<g class="reveal-treasure">'+
+    return '<g class="reveal-treasure" pointer-events="none">'+
       '<circle class="pulse" cx="'+TREASURE_SPOT.x+'" cy="'+TREASURE_SPOT.y+'" r="18" fill="none" stroke="var(--wrong-light)" stroke-width="2"/>'+
       '<circle cx="'+TREASURE_SPOT.x+'" cy="'+TREASURE_SPOT.y+'" r="10" fill="var(--wrong)" stroke="var(--paper-ink)" stroke-width="2"/>'+
-      '</g>';
+      '</g>'+
+      poiMarkup(TREASURE_ITEM, 'treasure', false);
   }
   function renderStars(){
     var layer = document.getElementById('starLayer');
