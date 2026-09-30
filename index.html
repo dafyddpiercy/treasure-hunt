@@ -73,6 +73,12 @@
   }
   .btn:active{transform:translateY(3px); box-shadow:0 0 0 var(--brass-dim), 0 3px 8px var(--shadow);}
   .btn:disabled{opacity:.4; cursor:not-allowed;}
+  .btn-outline{
+    font-family:var(--font-body); font-weight:600; font-size:.92rem; background:transparent; color:var(--brass-light);
+    border:1.5px solid var(--brass-dim); border-radius:3px; padding:12px 20px; cursor:pointer; width:100%; text-align:center;
+    margin-top:10px;
+  }
+  .btn-outline:active{transform:translateY(1px);}
 
   input[type="text"]{
     width:100%; font-family:var(--font-body); font-size:1.05rem; padding:14px; border-radius:3px;
@@ -248,6 +254,7 @@
     <p class="code-label">Your code &mdash; hand it to your host to drop your pin on the big screen, or paste it in the team chat</p>
     <textarea class="code-box" id="codeBox" rows="3" readonly></textarea>
     <button class="btn" id="copyCodeBtn">Copy my code</button>
+    <button class="btn-outline" id="backToMapBtn">Back to the map — find any pins I missed</button>
   </section>
 
 </div>
@@ -276,7 +283,7 @@
   "use strict";
 
   var MAP_W = 1158, MAP_H = 833;
-  var TREASURE_SPOT = {x:455, y:369};
+  var TREASURE_SPOT = {x:453, y:539};
   var SPEED_BONUS_MAX = 200;
   var GAME_SECONDS = 300;
 
@@ -404,6 +411,39 @@
         {
           photo:'eisteddfod-painting.jpg',
           caption:"But I did win 1st prize in the art competition for my age group! The category was 'Y dyfodol' (the future), so I painted tripods.\n\nShut up! No! My dad didn't help me at all!"
+        }
+      ]
+    },
+    {
+      id:'gallery', shortName:'The Gallery', poi:{x:455,y:369,icon:'building'},
+      cards:[
+        {
+          photo:'gallery-warehouse.jpg',
+          caption:"My mum and dad bought this old warehouse in 1985 for £10k and got started converting it into an art gallery. It opened in 1986 — it's their 40th anniversary this year."
+        },
+        {
+          photo:'gallery-renovation.jpg',
+          caption:"We all got stuck in to help out."
+        },
+        {
+          photo:'gallery-finished.jpg',
+          caption:"And this is what it looked like when it was done."
+        },
+        {
+          photo:'gallery-painting.jpg',
+          caption:"During COVID they decided to convert it into their new home, so they were closer to work."
+        },
+        {
+          photo:'gallery-now.jpg',
+          caption:"And this is what it looks like now."
+        },
+        {
+          photo:'gallery-interior.jpg',
+          caption:"This was what it looked like inside as a gallery."
+        },
+        {
+          photo:'gallery-kitchen.jpg',
+          caption:"And that same room is now their new kitchen."
         }
       ]
     },
@@ -559,6 +599,7 @@
     show('welcome');
   }
   $('#menuBtn').addEventListener('click', backToMenu);
+  $('#backToMapBtn').addEventListener('click', renderHunt);
 
   function renderHunt(){
     updateProgress();
@@ -582,7 +623,12 @@
     $('#mapHint').textContent = HINT_UNLOCKED;
   }
   $('#sheetBackdrop').addEventListener('click', closeSheet);
-  $('#sheetCloseBtn').addEventListener('click', closeSheet);
+  $('#sheetCloseBtn').addEventListener('click', function(){
+    var item = sheetCtx.item;
+    var isTreasureFinale = sheetCtx.kind==='treasure' && item && sheetCtx.cardIdx===item.cards.length-1;
+    closeSheet();
+    if(isTreasureFinale){ finishGame(); }
+  });
 
   function buildRevealHtml(card, correct, points, starAwarded){
     var verdict = correct ? 'Correct!' : 'Not quite.';
@@ -659,6 +705,7 @@
         wrap.style.display='none';
         revealEl.innerHTML = buildRevealHtml(card, already.correct, already.points, !!already.starAwarded);
         revealEl.classList.add('show');
+        $('#sheetCloseBtn').textContent = 'Back to the map';
         $('#sheetCloseBtn').style.display='block';
       } else {
         qEl.style.display='block'; qEl.textContent = card.question;
@@ -690,7 +737,10 @@
         var poiElF = document.querySelector('.poi[data-id="'+item.id+'"]');
         if(poiElF) poiElF.classList.add('found');
       }
-      if(isLast){ $('#sheetCloseBtn').style.display='block'; }
+      if(isLast){
+        $('#sheetCloseBtn').style.display='block';
+        $('#sheetCloseBtn').textContent = (sheetCtx.kind==='treasure') ? 'See how I did' : 'Back to the map';
+      }
     }
   }
 
@@ -937,9 +987,12 @@
   $('#mapResultsBtn').addEventListener('click', function(){ finishGame(); });
 
   function finishGame(){
-    if(state.ended) return;
+    // Once the trail is finished, the score is locked \u2014 going back to the
+    // map to look around doesn't reopen scoring, and calling this again
+    // just reshows the same frozen result.
+    if(state.ended){ show('results'); return; }
     state.ended=true;
-    if(state.timerHandle) clearInterval(state.timerHandle);
+    if(state.timerHandle){ clearInterval(state.timerHandle); state.timerHandle=null; }
     var cluePts = CLUES.reduce(function(s,c){ return s+ptsOf(c.id); },0);
     var speedBonus = state.treasureFound ? state.speedBonus : 0;
     var total = cluePts + speedBonus;
@@ -947,6 +1000,7 @@
     $('#totalScore').textContent=total;
     var bd=$('#breakdown'); bd.innerHTML='';
     CLUES.forEach(function(c){
+      if(!state.answersById[c.id]) return; // never opened \u2014 leave it off the scoreboard
       bd.innerHTML += '<div class="b-row"><span>'+c.shortName+'</span><span>'+ptsOf(c.id)+'</span></div>';
     });
     bd.innerHTML += '<div class="b-row"><span>Treasure'+(state.treasureFound?' \u2014 speed bonus':' \u2014 not found')+'</span><span>'+speedBonus+'</span></div>';
