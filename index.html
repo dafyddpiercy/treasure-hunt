@@ -256,7 +256,7 @@
 <div class="sheet" id="clueSheet">
   <div class="sheet-handle"></div>
   <div class="clue-label" id="clueLabel"></div>
-  <img class="clue-photo" id="cluePhoto" style="display:none;" alt="">
+  <img class="clue-photo" id="cluePhoto" style="display:none;" alt="" decoding="async">
   <div class="photo-nav" id="photoNav" style="display:none;">
     <button class="nav-arrow" id="sheetPrevBtn" aria-label="Previous photo">&larr;</button>
     <div class="carousel-dots" id="carouselDots"></div>
@@ -282,7 +282,7 @@
 
   var CLUES = [
     {
-      id:'moelygest', shortName:'The hill', poi:{x:112,y:412,icon:'hill'}, star:'bottom_left',
+      id:'moelygest', shortName:'The hill', poi:{x:112,y:412,icon:'hill'},
       cards:[
         {
           photo:'moelygest-stones.jpg',
@@ -299,7 +299,7 @@
       ]
     },
     {
-      id:'peaks', shortName:'The challenge', poi:{x:785,y:561,icon:'mountain'}, star:'bottom_mid',
+      id:'peaks', shortName:'The challenge', poi:{x:785,y:561,icon:'mountain'},
       cards:[
         {
           photo:'snowdon-view.jpg',
@@ -316,7 +316,7 @@
       ]
     },
     {
-      id:'chopsuey', shortName:'The near miss', poi:{x:398,y:349,icon:'shop'}, star:'top',
+      id:'chopsuey', shortName:'The near miss', poi:{x:398,y:349,icon:'shop'},
       cards:[
         {
           photo:'chop-suey-house.jpg',
@@ -329,18 +329,7 @@
       ]
     },
     {
-      id:'welsh', shortName:'The language', poi:{x:530,y:180,icon:'quill'}, star:'right',
-      cards:[
-        {
-          question:"Translate: \u201cDw i wrth fy modd yn crwydro.\u201d",
-          options:["I love wandering / I'm in my element roaming","I am extremely lost right now","This sheep is not mine","I'd like a second breakfast"],
-          correct:0,
-          reveal:"\u201cI love wandering.\u201d Fairly on the nose, given what happens next."
-        }
-      ]
-    },
-    {
-      id:'ysgoleifionydd', shortName:'School days', poi:{x:428,y:220,icon:'quill'}, star:'right',
+      id:'ysgoleifionydd', shortName:'School days', poi:{x:428,y:220,icon:'quill'},
       cards:[
         {
           photo:'ysgol-eifion-wyn.jpg',
@@ -353,6 +342,19 @@
           options:["[Expletive] to the English","The sheep is not mine","I'd like a second breakfast","I'm so lost, I don't know what's going on right now"],
           correct:0,
           reveal:"\u2018[Expletive] to the English.\u2019 A phrase every Welsh kid learns early, whether they're taught it in class or not."
+        }
+      ]
+    },
+    {
+      id:'coliseum', shortName:'The Coliseum', poi:{x:398,y:292,icon:'building'},
+      cards:[
+        {
+          photo:'coliseum.jpg',
+          caption:"The Coliseum \u2014 a Porthmadog landmark! The world premiere of 'First Knight' (awful Richard Gere King Arthur film) was held here in 1995, as it was filmed in the area.\n\nSome company (probably English) bought the building in the 2000s just to knock it down, and left an area of rubble and weeds. \ud83d\ude22\n\nAnyway, here's a chance to win a clue\u2026",
+          question:"My first trip to the cinema was at the Coliseum, but what film did I see?",
+          options:["Metropolis (1927)","Alien (1979)","The NeverEnding Story (1984)","First Knight \u2014 awful Richard Gere King Arthur film (1995)"],
+          correct:2,
+          reveal:"The NeverEnding Story. I was petrified \u2014 I hid behind the chair at the part where he has to run between the two statues with the laser eyes!"
         }
       ]
     }
@@ -369,15 +371,6 @@
         {photo:'cob-harbour.jpg', caption:"Here's me and my husband Jai at the harbour."},
         {photo:'cob-christmas.jpg', caption:"Here's Jai again, with my mum and dad on the Cob last Christmas."},
         {photo:'cob-funrun.jpg', caption:"Finally, here I am running the Cob Fun Run. A whole mile is a long way to run when you're in primary school! The Fun Run no longer exists \u2014 ruined by health and safety, insurance and having to close roads and all that."}
-      ]
-    },
-    {
-      id:'coliseum', shortName:'The Coliseum', poi:{x:398,y:292,icon:'building'},
-      cards:[
-        {
-          photo:'coliseum.jpg',
-          caption:"The Coliseum \u2014 a Porthmadog landmark. I saw my first film here: The NeverEnding Story. I was petrified! The world premiere of First Knight (an awful Richard Gere King Arthur film) was held here in 1995. Then some company \u2014 probably English \u2014 bought the building in the 2000s just to knock it down, and left a pile of rubble and weeds. \ud83d\ude22"
-        }
       ]
     },
     {
@@ -412,21 +405,19 @@
     bottom_left:{x:173,  y:669}
   };
   var STAR_LINES = [['top','bottom_mid'], ['bottom_left','right']];
-  var STAR_IDS = [].concat.apply([], STAR_LINES);
-  // Each CLUES entry that should light up a star sets star:'<one of the STAR_POINTS ids above>'.
-  // More than one clue can point at the same star (a backup question), so
-  // adding a 5th/6th quiz clue never needs a new star — it just gives
-  // another way to reveal one of these 4.
+  // Stars aren't tied to specific clues — any correct answer claims the next
+  // free star, in this fixed visual order, until all 4 are lit. That way any
+  // 4 correct answers (out of however many quiz clues exist) complete the X.
+  var STAR_FILL_ORDER = ['top','right','bottom_mid','bottom_left'];
 
   var state = {
-    name:'', answersById:{}, viewedFlavors:{}, starsById:{}, treasureFound:false, speedBonus:0, total:0,
+    name:'', answersById:{}, viewedFlavors:{}, starsById:{}, starOrder:[], treasureFound:false, speedBonus:0, total:0,
     timeLeft:GAME_SECONDS, timerHandle:null, qStartTs:0, ended:false, submitted:false, tourStarted:false
   };
   var HINT_LOCKED = 'Start with the flag marked “Start here” on the Cob.';
   var HINT_UNLOCKED = 'Click the map markers to explore Porthmadog — get quiz questions right to reveal the treasure stars.';
   var toastTimer = null;
 
-  function clueById(id){ return CLUES.filter(function(c){ return c.id===id; })[0]; }
 
   function $(sel){ return document.querySelector(sel); }
   function show(name){
@@ -456,16 +447,15 @@
     finishGame();
   }
   function updateProgress(){
-    STAR_IDS.forEach(function(id,i){
+    for(var i=0;i<4;i++){
       var dot = document.querySelector('.pt-dot[data-i="'+i+'"]');
-      if(dot) dot.classList.toggle('done', !!state.starsById[id]);
-    });
+      if(dot) dot.classList.toggle('done', i < state.starOrder.length);
+    }
     var flagDot = document.querySelector('.pt-dot[data-i="4"]');
     if(flagDot) flagDot.classList.toggle('done', !!state.treasureFound);
   }
   function updateHuntStatus(){
-    var count = STAR_IDS.filter(function(id){ return !!state.starsById[id]; }).length;
-    $('#trailLabel').textContent = count + '/4 stars';
+    $('#trailLabel').textContent = state.starOrder.length + '/4 stars';
   }
   function showToast(msg){
     var t=$('#toast'); t.textContent=msg; t.classList.add('show');
@@ -484,7 +474,7 @@
   function backToMenu(){
     if(state.timerHandle) clearInterval(state.timerHandle);
     closeSheet();
-    state.name=''; state.answersById={}; state.viewedFlavors={}; state.starsById={}; state.treasureFound=false; state.speedBonus=0; state.total=0;
+    state.name=''; state.answersById={}; state.viewedFlavors={}; state.starsById={}; state.starOrder=[]; state.treasureFound=false; state.speedBonus=0; state.total=0;
     state.timeLeft=GAME_SECONDS; state.timerHandle=null; state.qStartTs=0; state.ended=false; state.submitted=false; state.tourStarted=false;
     $('#nameInput').value='';
     $('#nameWarning').style.display='none';
@@ -536,8 +526,18 @@
     if(!item) return;
     sheetCtx = {kind:kind, item:item, cardIdx:0};
     if(kind==='clue' && state.answersById[id]){ sheetCtx.cardIdx = item.cards.length-1; }
+    preloadItemPhotos(item);
     renderCard();
     openSheet();
+  }
+
+  // Warm the cache for every photo on this pin (at most a handful) as soon
+  // as it's opened, so flipping through a multi-photo pin feels instant
+  // after the first tap instead of loading each photo on demand.
+  function preloadItemPhotos(item){
+    item.cards.forEach(function(c){
+      if(c.photo){ var img = new Image(); img.decoding='async'; img.src = c.photo; }
+    });
   }
 
   function renderDots(total, idx){
@@ -584,7 +584,7 @@
       if(already){
         qEl.style.display='none';
         wrap.style.display='none';
-        revealEl.innerHTML = buildRevealHtml(card, already.correct, already.points, already.correct && !!item.star && !!state.starsById[item.star]);
+        revealEl.innerHTML = buildRevealHtml(card, already.correct, already.points, !!already.starAwarded);
         revealEl.classList.add('show');
         $('#sheetCloseBtn').style.display='block';
       } else {
@@ -626,9 +626,18 @@
     var correct = chosenIdx===card.correct;
     var points=0;
     if(correct){ var bonus=Math.max(0,Math.round(20-Math.min(elapsed,20))); points=100+bonus; }
-    state.answersById[item.id] = {correct:correct, points:points, chosenIdx:chosenIdx};
 
-    var newStarRevealed = correct && !!item.star && !state.starsById[item.star];
+    // Stars aren't tied to specific clues: the first 4 correct answers
+    // (in whatever order they happen) claim the 4 star slots.
+    var newStarRevealed = false;
+    if(correct && state.starOrder.length<4){
+      var starId = STAR_FILL_ORDER[state.starOrder.length];
+      state.starOrder.push(starId);
+      state.starsById[starId] = true;
+      newStarRevealed = true;
+    }
+
+    state.answersById[item.id] = {correct:correct, points:points, chosenIdx:chosenIdx, starAwarded:newStarRevealed};
 
     $('#clueQuestion').style.display='none';
     $('#clueOptions').style.display='none';
@@ -642,7 +651,6 @@
     if(poiEl) poiEl.classList.add('found');
 
     if(newStarRevealed){
-      state.starsById[item.star] = true;
       renderStars();
       checkTreasureComplete();
     }
@@ -791,8 +799,7 @@
   }
   function checkTreasureComplete(){
     if(state.treasureFound) return;
-    var allDone = STAR_LINES.every(function(pair){ return state.starsById[pair[0]] && state.starsById[pair[1]]; });
-    if(!allDone) return;
+    if(state.starOrder.length<4) return;
     state.treasureFound = true;
     state.speedBonus = Math.round(SPEED_BONUS_MAX * Math.max(0,state.timeLeft) / GAME_SECONDS);
     renderStars();
